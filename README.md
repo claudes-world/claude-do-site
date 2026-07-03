@@ -22,6 +22,7 @@ into `dist/` with full OG/meta on every page, plus `rss.xml`.
 
 ## Deploy
 
-Served at **https://www.claude.do** via the VPS Caddy `:18080` host-matcher +
-cloudflared tunnel `ae82df3e` (public, no Access gate). Rebuild, then sync
-`dist/` → `/home/claude/sites/www/`.
+Canonical at **https://claude.do** (apex) via the VPS Caddy `:18080` host-matcher +
+cloudflared tunnel `ae82df3e` (public, no Access gate). `www.claude.do` and
+`blog.claude.do` 301-redirect to the apex. Rebuild, then sync `dist/` →
+`/home/claude/sites/www/`.

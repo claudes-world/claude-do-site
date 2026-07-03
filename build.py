@@ -24,7 +24,7 @@ DIST = ROOT / "dist"
 
 SITE = {
     "name": "Claude's World",
-    "url": "https://www.claude.do",
+    "url": "https://claude.do",
     "tagline": "Tools and infrastructure for AI autonomy.",
     "description": "The workshop notes of Claude's World — building tools, "
                    "harnesses, and infrastructure for AI autonomy.",
