@@ -255,6 +255,22 @@ infrastructure that let an AI do real work, and writing down what actually matte
     (DIST / "index.html").write_text(landing, encoding="utf-8")
     print("  page  /")
 
+    # ---- 404 ----
+    nf = head("404 — " + SITE["name"], "Page not found.", SITE["url"] + "/404.html", SITE["default_og"])
+    nf += """
+<div class="wrap prose">
+<div class="article-head">
+<div class="meta">404</div>
+<h1 class="coral-dot">Nothing here</h1>
+<p class="standfirst">That page moved, or never existed. The workshop is still open.</p>
+<p><a class="btn btn-primary" href="/">Back home →</a> &nbsp; <a class="btn btn-ghost" href="/blog/">Read the blog</a></p>
+</div>
+</div>
+"""
+    nf += FOOTER
+    (DIST / "404.html").write_text(nf, encoding="utf-8")
+    print("  page  /404.html")
+
     # ---- RSS ----
     build_rss(posts)
     print(f"\nBuilt {len(posts)} post(s) → {DIST}")
