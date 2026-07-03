@@ -15,7 +15,9 @@
   --coral:      #d97757;
   --coral-deep: #c05f3f;
   --coral-soft: #e8916f;
-  --teal:       #14b8a6;   /* sparing — the living-pulse accent only */
+  --teal:       #10a99b;   /* co-accent — "the living pulse" (the machine signal) */
+  --teal-deep:  #0c8579;   /* teal that holds contrast on paper */
+  --teal-soft:  #45cabb;
   --terminal:   #0a0a0b;
   --terminal-2: #141312;
   --warm-white: #fafaf7;
@@ -39,6 +41,9 @@
     --coral:      #e8916f;
     --coral-deep: #e8916f;
     --coral-soft: #f0b890;
+    --teal:       #2fc4b4;
+    --teal-deep:  #45cabb;   /* brighter on dark for legibility */
+    --teal-soft:  #6fd8cb;
     --terminal:   #0a0a0b;
     --terminal-2: #141312;
     --rule:       rgba(236, 231, 221, 0.14);
@@ -70,6 +75,10 @@ a {
   transition: border-color .15s ease, color .15s ease;
 }
 a:hover { color: var(--coral); border-bottom-color: var(--coral); }
+a:focus-visible, .btn:focus-visible, .thumb:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px; border-radius: 3px;
+}
 
 /* ── Layout shells ─────────────────────────────────────────── */
 .wrap { width: 100%; max-width: 68rem; margin: 0 auto; padding: 0 1.5rem; }
@@ -78,8 +87,21 @@ a:hover { color: var(--coral); border-bottom-color: var(--coral); }
 /* ── Header ────────────────────────────────────────────────── */
 .site-header {
   background: var(--terminal);
-  border-bottom: 2px solid var(--coral);
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg, var(--coral) 0%, var(--coral) 35%, var(--teal) 100%) 1;
   position: sticky; top: 0; z-index: 20;
+}
+/* Header black bleeds UP off the top edge as a fade — so content scrolling
+   behind a translucent mobile browser chrome (e.g. Telegram's in-app viewer)
+   dissolves into black instead of colliding. Invisible on desktop. */
+.site-header::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 100%;
+  height: 260px;
+  background: linear-gradient(to top,
+    var(--terminal) 0%, var(--terminal) 34%, rgba(10, 10, 11, 0) 100%);
+  pointer-events: none;
 }
 .site-header .wrap {
   display: flex; align-items: center; justify-content: space-between;
@@ -124,10 +146,23 @@ h1, h2, h3, h4 {
 h1 { font-size: clamp(2.1rem, 5vw, 3.1rem); margin: 0 0 .5rem; }
 h2 { font-size: 1.7rem; margin: 2.6rem 0 .9rem; }
 h3 { font-size: 1.25rem; margin: 2rem 0 .6rem; }
+/* The living pulse — a teal dot that quietly breathes. The signature mark:
+   coral is the craft, teal is the machine that's awake and running. */
 .coral-dot::after {
   content: ""; display: inline-block;
-  width: .32em; height: .32em; margin-left: .18em;
-  border-radius: 50%; background: var(--coral);
+  width: .3em; height: .3em; margin-left: .2em;
+  border-radius: 50%; background: var(--teal);
+  box-shadow: 0 0 0 0 rgba(16, 169, 155, 0.55);
+  animation: pulse 2.6s ease-out infinite;
+  vertical-align: baseline;
+}
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(16, 169, 155, 0.5); }
+  70%  { box-shadow: 0 0 0 0.5em rgba(16, 169, 155, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 169, 155, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .coral-dot::after { animation: none; }
 }
 p { margin: 0 0 1.15rem; }
 
@@ -135,8 +170,15 @@ p { margin: 0 0 1.15rem; }
 .hero { padding: 5.5rem 0 3rem; }
 .hero .kicker {
   font-family: var(--mono); font-size: .8rem; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--coral-deep); margin-bottom: 1.1rem;
+  text-transform: uppercase; color: var(--teal-deep); margin-bottom: 1.1rem;
+  display: inline-flex; align-items: center; gap: .5rem;
 }
+.hero .kicker::before {
+  content: ""; width: .5rem; height: .5rem; border-radius: 50%;
+  background: var(--teal); box-shadow: 0 0 0 0 rgba(16,169,155,.5);
+  animation: pulse 2.6s ease-out infinite;
+}
+@media (prefers-reduced-motion: reduce) { .hero .kicker::before { animation: none; } }
 .hero h1 { max-width: 16ch; }
 .hero .lede {
   font-size: 1.28rem; color: var(--ink-soft); max-width: 40ch;
@@ -162,7 +204,7 @@ p { margin: 0 0 1.15rem; }
 .section { padding: 3rem 0; }
 .section-title {
   font-family: var(--mono); font-size: .8rem; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--muted); margin-bottom: 1.4rem;
+  text-transform: uppercase; color: var(--teal-deep); margin-bottom: 1.4rem;
 }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1.1rem; }
 .card {
@@ -172,7 +214,7 @@ p { margin: 0 0 1.15rem; }
 .card h3 { margin: 0 0 .4rem; font-size: 1.1rem; }
 .card p { margin: 0; color: var(--ink-soft); font-size: .96rem; }
 .card .tag {
-  font-family: var(--mono); font-size: .72rem; color: var(--coral-deep);
+  font-family: var(--mono); font-size: .72rem; color: var(--teal-deep);
   letter-spacing: .06em; text-transform: uppercase;
 }
 
@@ -201,8 +243,8 @@ p { margin: 0 0 1.15rem; }
 .post-card-body { min-width: 0; }
 .badge {
   display: inline-block; font-family: var(--mono); font-size: .64rem;
-  letter-spacing: .1em; text-transform: uppercase; color: var(--coral-deep);
-  border: 1px solid rgba(217,119,87,0.4); border-radius: 999px;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--teal-deep);
+  border: 1px solid rgba(16,169,155,0.45); border-radius: 999px;
   padding: .05rem .5rem; margin-left: .5rem; vertical-align: middle;
 }
 @media (max-width: 620px) {
