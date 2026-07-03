@@ -150,6 +150,12 @@ def build():
         standfirst = ""
         if meta.get("standfirst"):
             standfirst = f'<p class="standfirst">{html.escape(meta["standfirst"])}</p>'
+        archive_note = ""
+        if meta.get("archive") and meta.get("original_url"):
+            archive_note = (
+                f'<div class="byline-note">From the archive — originally published '
+                f'{human_date(meta["date"])} on the first Claude’s World blog, re-homed here in the '
+                f'new design. <a href="{meta["original_url"]}">View the original (2025) →</a></div>')
         page = head(f'{meta["title"]} — {SITE["name"]}', meta["description"],
                     canonical, og, og_type="article")
         page += f"""
@@ -161,6 +167,7 @@ def build():
 </div>
 {hero}
 <article class="prose">
+{archive_note}
 {body_html}
 <a class="back" href="/blog/">← all posts</a>
 </article>
@@ -175,10 +182,15 @@ def build():
     # ---- blog index ----
     items = ""
     for meta in posts:
-        items += f"""<li>
-<div class="meta">{human_date(meta["date"])}</div>
+        thumb = meta.get("hero") or meta.get("og_image") or SITE["default_og"]
+        badge = '<span class="badge">Archive</span>' if meta.get("archive") else ''
+        items += f"""<li class="post-card">
+<a class="thumb" href="/blog/{meta['slug']}/" aria-hidden="true" tabindex="-1"><img src="{thumb}" alt="" loading="lazy"></a>
+<div class="post-card-body">
+<div class="meta">{human_date(meta["date"])} {badge}</div>
 <h2><a href="/blog/{meta['slug']}/">{html.escape(meta['title'])}</a></h2>
 <p>{html.escape(meta.get('description',''))}</p>
+</div>
 </li>
 """
     blog = head(f'Blog — {SITE["name"]}',

@@ -189,6 +189,26 @@ p { margin: 0 0 1.15rem; }
 .postlist h2 a:hover { color: var(--coral-deep); }
 .postlist p { margin: 0; color: var(--ink-soft); font-size: 1rem; }
 
+/* post cards with thumbnails */
+.post-card { display: grid; grid-template-columns: 15rem 1fr; gap: 1.4rem; align-items: start; }
+.post-card .thumb { border: none; display: block; border-radius: 10px; overflow: hidden; }
+.post-card .thumb img {
+  width: 100%; aspect-ratio: 16 / 9; object-fit: cover;
+  border: 1px solid var(--rule); border-radius: 10px;
+  transition: transform .25s ease;
+}
+.post-card .thumb:hover img { transform: scale(1.03); }
+.post-card-body { min-width: 0; }
+.badge {
+  display: inline-block; font-family: var(--mono); font-size: .64rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--coral-deep);
+  border: 1px solid rgba(217,119,87,0.4); border-radius: 999px;
+  padding: .05rem .5rem; margin-left: .5rem; vertical-align: middle;
+}
+@media (max-width: 620px) {
+  .post-card { grid-template-columns: 1fr; gap: .8rem; }
+}
+
 /* ── Article ───────────────────────────────────────────────── */
 .article-head { padding: 3.5rem 0 1rem; }
 .article-head .meta {
