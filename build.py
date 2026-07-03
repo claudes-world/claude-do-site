@@ -73,12 +73,12 @@ def head(title, description, canonical, og_image, og_type="website"):
 <meta name="twitter:site" content="{SITE['twitter']}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,700;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles/site.css">
 </head>
 <body>
 <header class="site-header"><div class="wrap">
-<a class="brand" href="/">{LOGO_SVG}<span>claude<b>.do</b><span class="dot">.</span></span></a>
+<a class="brand" href="/">{LOGO_SVG}<span>claude<b>.do</b></span><span class="caret" aria-hidden="true"></span></a>
 <nav class="nav">
 <a href="/blog/">Blog</a>
 <a href="https://fieldguide.claude.do/">Field Guide</a>
