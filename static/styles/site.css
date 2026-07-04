@@ -127,7 +127,9 @@ a:focus-visible, .btn:focus-visible, .thumb:focus-visible {
 }
 .brand:hover { color: var(--warm-white); }
 .brand svg { width: 24px; height: 24px; display: block; }
-.brand .caret { height: .95em; width: .42em; margin-left: .05em; }
+/* Brand standard: the coral dot is always present. Bold + up-sized so the
+   colour reads even at wordmark scale. */
+.brand .dot { color: var(--coral); font-weight: 700; font-size: 1.25em; margin-left: -0.02em; }
 .nav { display: flex; gap: 1.3rem; align-items: center; }
 .nav a {
   color: rgba(250,250,247,0.72); border: none;

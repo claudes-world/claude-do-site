@@ -78,7 +78,7 @@ def head(title, description, canonical, og_image, og_type="website"):
 </head>
 <body>
 <header class="site-header"><div class="wrap">
-<a class="brand" href="/">{LOGO_SVG}<span>claude<b>.do</b></span><span class="caret" aria-hidden="true"></span></a>
+<a class="brand" href="/">{LOGO_SVG}<span>claude<b>.do</b><b class="dot">.</b></span></a>
 <nav class="nav">
 <a href="/blog/">Blog</a>
 <a href="https://fieldguide.claude.do/">Field Guide</a>
