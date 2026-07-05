@@ -47,7 +47,7 @@
     --panel-2:    #e9e5d8;
     --ink:        #20233c;
     --ink-soft:   #4c5069;
-    --muted:      #6d7292;
+    --muted:      #5e6386;   /* 4.5:1+ on paper at small meta sizes */
     --amber:      #8a6200;   /* amber, printed */
     --amber-deep: #6f4f00;
     --amber-soft: #8a6200;

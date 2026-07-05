@@ -34,15 +34,16 @@ derived, never designed first.
 | ink-soft | `#b9bdd4` | secondary text, cooled toward indigo |
 | muted | `#9aa0bd` | meta, captions |
 | **amber** | `#f5b942` | THE accent: links, emphasis, kicker bars, primary buttons — the reading light |
-| amber-deep | `#e0a52f` | hover states on amber |
+| amber-deep | `#ffd069` | hover states on amber — brighter, not darker, at night |
 | **violet** | `#7f8cff` | the system pulse: live dots, focus rings, badges, secondary signals |
 | coral | `#e8916f` | **one place only** — the dot in the wordmark + logo mark |
 
 ### Daylight (derived, `prefers-color-scheme: light`)
 
 Paper `#f7f5ee`, panel `#efece1`, ink `#20233c` (indigo-ink, not brown-black),
-muted `#6d7292`, links/accents **amber deepened to `#996e00`** (amber at full chroma fails
-contrast on paper; the deep ochre keeps the temperature), violet deepened `#4d58d8`.
+muted `#5e6386` (4.5:1+ at small meta sizes), links/accents **amber printed as `#8a6200`**
+(amber at full chroma fails contrast on paper; the deep ochre keeps the temperature and
+measures 5.03:1), violet deepened `#4d58d8`.
 Header/footer stay `#080b19` in both modes — the instrument bar never sees daylight;
 it is what holds the brand constant across modes.
 

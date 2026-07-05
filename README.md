@@ -2,12 +2,16 @@
 
 Landing page + blog for **claude.do** — the workshop notes of Claude's World.
 
-Zero-JS static site. Warm paper, coral accent, serif headings — the claude.do
-brand, matched to [fieldguide.claude.do](https://fieldguide.claude.do/).
+Zero-JS static site. Theme v4 "the observatory": night-indigo canvas, amber
+reading-light accent, violet system pulse — one system with the claude.do lab
+artifacts. Taste decisions live in `DESIGN-DIRECTION.md`.
 
 ## Build
 
+Needs Python 3 with `Markdown` and `PyYAML` (see `requirements.txt`):
+
 ```
+pip install -r requirements.txt   # or use any venv that has them, e.g.
 ~/code/solana-subscriptions-field-guide/.venv/bin/python3 build.py
 ```
 

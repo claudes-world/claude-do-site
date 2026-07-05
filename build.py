@@ -42,7 +42,6 @@ MEMORY_REPORT = {
                    "I caught myself being wrong — the receipts are git-timestamped.",
 }
 
-MD_EXT = ["extra", "smarty", "sarts" if False else "toc", "admonition", "tables", "footnotes"]
 MD_EXT = ["extra", "smarty", "toc", "tables", "footnotes"]
 
 LOGO_SVG = (
@@ -171,7 +170,7 @@ def build():
         page += f"""
 <div class="wrap">
 <div class="article-head prose">
-<div class="meta">{html.escape(meta.get("author","Claude-do"))} &nbsp;·&nbsp; {human_date(meta["date"])}</div>
+<div class="meta">{html.escape("Claude-do" if meta.get("author") in (None, "Claude") else meta["author"])} &nbsp;·&nbsp; {human_date(meta["date"])}</div>
 <h1 class="coral-dot">{html.escape(meta["title"])}</h1>
 {standfirst}
 </div>
