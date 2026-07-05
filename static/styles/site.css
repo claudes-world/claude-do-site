@@ -1,31 +1,35 @@
 /* ─────────────────────────────────────────────────────────────
-   claude.do — brand site  ·  v3 "the machine's workshop"
-   Dark-first (paper = daylight mode). Two voices:
-     · Space Mono  → the machine speaks: headlines, wordmark, labels, UI
-     · Source Serif → the human writes: reading body & long-form prose
-   Two signals: coral = craft/human · teal = the live pulse / system.
-   Signature: a blinking cursor. Zero JavaScript.
+   claude.do — brand site  ·  v4 "the observatory"
+   The lab notebook of an autonomous agent: night-indigo air,
+   one warm reading light (amber), a faint violet pulse from
+   the machines. Same room as the memory-report & bake-off
+   artifacts — landing, blog, and exhibits are ONE system.
+   Three voices:
+     · Space Mono     → the machine speaks: headlines, wordmark, UI
+     · Source Serif   → the human writes: long-form prose
+     · JetBrains Mono → the data layer: meta, tags, numbers (tabular)
+   Coral survives in exactly one place: the dot in the wordmark —
+   the inherited pixel. Signature motion: the caret. Zero JS.
    ───────────────────────────────────────────────────────────── */
 
-/* ---- DARK IS THE DEFAULT (the brand) ---- */
+/* ---- NIGHT IS THE DEFAULT (the brand) ---- */
 :root {
-  --paper:      #0d0c0b;   /* the canvas: warm near-black */
-  --paper-2:    #16140f;
-  --paper-3:    #201d17;
-  --ink:        #ece7dd;   /* warm off-white text */
-  --ink-soft:   #b8b1a4;
-  --muted:      #7d766a;
-  --coral:      #e8916f;
-  --coral-deep: #ef9a78;
-  --coral-soft: #f0b890;
-  --teal:       #2fc4b4;   /* the living pulse */
-  --teal-deep:  #45cabb;
-  --teal-soft:  #6fd8cb;
-  --terminal:   #060606;   /* header/footer bar — darker than the canvas */
+  --paper:      #0d1024;   /* the canvas: night indigo */
+  --panel:      #151a35;   /* exhibits: cards, chips */
+  --panel-2:    #1a2040;   /* raised / hover panel */
+  --ink:        #e8e6df;   /* warm off-white text */
+  --ink-soft:   #b9bdd4;   /* secondary, cooled toward indigo */
+  --muted:      #9aa0bd;   /* meta, captions */
+  --amber:      #f5b942;   /* the reading light — links, emphasis */
+  --amber-deep: #ffd069;   /* hover: brighter, not darker, at night */
+  --amber-soft: #f8cf7a;
+  --violet:     #7f8cff;   /* the system pulse — badges, focus, live */
+  --terminal:   #080b19;   /* header/footer instrument bar */
   --warm-white: #fafaf7;
-  --rule:       rgba(236, 231, 221, 0.13);
-  --rule-soft:  rgba(236, 231, 221, 0.07);
-  --card:       #141210;
+  --rule:       #262d55;
+  --rule-soft:  #1c2245;
+  --card:       #151a35;
+  --btn-ink:    #1a1405;   /* text on amber */
 
   --measure: 42rem;
   --display: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -33,25 +37,25 @@
   --mono:    "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 }
 
-/* ---- DAYLIGHT MODE (opt-in via OS light preference) ---- */
+/* ---- DAYLIGHT (derived: the notebook in daylight) ----
+   Indigo-ink on warm paper; amber prints as deep ochre for contrast.
+   The instrument bar (header/footer) never sees daylight. */
 @media (prefers-color-scheme: light) {
   :root {
-    --paper:      #faf8f3;
-    --paper-2:    #f3efe7;
-    --paper-3:    #ece6db;
-    --ink:        #211e1a;
-    --ink-soft:   #58524a;
-    --muted:      #8b8478;
-    --coral:      #d97757;
-    --coral-deep: #c05f3f;
-    --coral-soft: #e8916f;
-    --teal:       #10a99b;
-    --teal-deep:  #0c8579;
-    --teal-soft:  #45cabb;
-    --terminal:   #0a0a0b;
-    --rule:       rgba(33, 30, 26, 0.12);
-    --rule-soft:  rgba(33, 30, 26, 0.07);
-    --card:       #f3efe7;
+    --paper:      #f7f5ee;
+    --panel:      #efece1;
+    --panel-2:    #e9e5d8;
+    --ink:        #20233c;
+    --ink-soft:   #4c5069;
+    --muted:      #6d7292;
+    --amber:      #8a6200;   /* amber, printed */
+    --amber-deep: #6f4f00;
+    --amber-soft: #8a6200;
+    --violet:     #4d58d8;
+    --rule:       rgba(32, 35, 60, 0.16);
+    --rule-soft:  rgba(32, 35, 60, 0.08);
+    --card:       #efece1;
+    --btn-ink:    #fff8e8;
   }
 }
 
@@ -72,22 +76,22 @@ body {
 img, video { max-width: 100%; height: auto; display: block; }
 
 a {
-  color: var(--coral-deep);
+  color: var(--amber);
   text-decoration: none;
-  border-bottom: 1px solid rgba(232, 145, 111, 0.35);
+  border-bottom: 1px solid color-mix(in srgb, var(--amber) 40%, transparent);
   transition: border-color .15s ease, color .15s ease;
 }
-a:hover { color: var(--coral); border-bottom-color: var(--coral); }
+a:hover { color: var(--amber-deep); border-bottom-color: var(--amber-deep); }
 a:focus-visible, .btn:focus-visible, .thumb:focus-visible {
-  outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 3px;
+  outline: 2px solid var(--violet); outline-offset: 3px; border-radius: 3px;
 }
 
-/* The signature: a blinking block cursor. */
+/* The signature: a blinking block cursor, in the reading light. */
 .caret {
   display: inline-block;
   width: .52em; height: 1.02em;
   margin-left: .12em;
-  background: var(--teal);
+  background: var(--amber);
   vertical-align: -0.13em;
   animation: blink 1.15s steps(1) infinite;
 }
@@ -98,23 +102,22 @@ a:focus-visible, .btn:focus-visible, .thumb:focus-visible {
 .wrap { width: 100%; max-width: 68rem; margin: 0 auto; padding: 0 1.5rem; }
 .prose { max-width: var(--measure); margin: 0 auto; padding: 0 1.5rem; }
 
-/* ── Header ────────────────────────────────────────────────── */
+/* ── Header — the instrument bar ───────────────────────────── */
 .site-header {
   background: var(--terminal);
   border-bottom: 2px solid transparent;
-  border-image: linear-gradient(90deg, var(--coral) 0%, var(--coral) 35%, var(--teal) 100%) 1;
+  border-image: linear-gradient(90deg, #f5b942 0%, #f5b942 35%, #7f8cff 100%) 1;
   position: sticky; top: 0; z-index: 20;
 }
-/* Header black bleeds UP off the top edge as a fade — so content scrolling
-   behind a translucent mobile browser chrome (e.g. Telegram's in-app viewer)
-   dissolves into black instead of colliding. Invisible on desktop. */
+/* Header bleeds UP off the top edge as a fade — content scrolling behind
+   translucent mobile browser chrome dissolves into the bar. */
 .site-header::before {
   content: "";
   position: absolute;
   left: 0; right: 0; bottom: 100%;
   height: 260px;
   background: linear-gradient(to top,
-    var(--terminal) 0%, var(--terminal) 34%, rgba(6, 6, 6, 0) 100%);
+    var(--terminal) 0%, var(--terminal) 34%, rgba(8, 11, 25, 0) 100%);
   pointer-events: none;
 }
 .site-header .wrap {
@@ -127,69 +130,72 @@ a:focus-visible, .btn:focus-visible, .thumb:focus-visible {
 }
 .brand:hover { color: var(--warm-white); }
 .brand svg { width: 24px; height: 24px; display: block; }
-/* Brand standard: the dot inside claude.do is always coral (matches the logo
-   mark). Bold + up-sized so the colour unmistakably reads at wordmark scale. */
-.brand .dot { color: var(--coral); font-weight: 700; font-size: 1.3em; }
+/* Brand standard: the dot inside claude.do is always coral — the one
+   inherited pixel. Bold + up-sized so it unmistakably reads at wordmark scale. */
+.brand .dot { color: #e8916f; font-weight: 700; font-size: 1.3em; }
 .nav { display: flex; gap: 1.3rem; align-items: center; }
 .nav a {
   color: rgba(250,250,247,0.72); border: none;
   font-family: var(--display); font-size: .82rem; font-weight: 400; letter-spacing: -0.01em;
 }
-.nav a:hover { color: var(--warm-white); }
+.nav a:hover { color: #f5b942; }
 
-/* ── Footer ────────────────────────────────────────────────── */
+/* ── Footer — the report sign-off ──────────────────────────── */
 .site-footer {
-  background: var(--terminal); color: rgba(250,250,247,0.5);
-  margin-top: 5rem; padding: 2.5rem 0;
+  background: var(--terminal); color: rgba(250,250,247,0.52);
+  margin-top: 6rem; padding: 3.2rem 0;
   font-family: var(--mono); font-size: .82rem;
+  font-variant-numeric: tabular-nums;
+  border-top: 1px solid #1c2245;
 }
 .site-footer .wrap {
   display: flex; flex-wrap: wrap; gap: .8rem 1.6rem;
   align-items: center; justify-content: space-between;
 }
 .site-footer a { color: rgba(250,250,247,0.78); border: none; }
-.site-footer a:hover { color: var(--teal-soft); }
+.site-footer a:hover { color: #f5b942; }
+.site-footer .sig { color: #f5b942; }
 
 /* ── Typography — headlines in the machine's voice ─────────── */
 h1, h2, h3, h4 {
   font-family: var(--display);
   color: var(--ink); font-weight: 700;
-  letter-spacing: -0.03em; line-height: 1.12;
+  letter-spacing: -0.035em; line-height: 1.12;
 }
-h1 { font-size: clamp(1.85rem, 4.3vw, 2.85rem); margin: 0 0 .5rem; }
+h1 { font-size: clamp(1.85rem, 4.3vw, 2.8rem); margin: 0 0 .5rem; }
 h2 { font-size: 1.4rem; margin: 2.6rem 0 .9rem; letter-spacing: -0.02em; }
 h3 { font-size: 1.12rem; margin: 2rem 0 .6rem; letter-spacing: -0.02em; }
 p { margin: 0 0 1.15rem; }
 
-/* h1 gets the blinking cursor (rendered via markup .caret; this dot form
-   is the fallback signature for headings without an explicit caret). */
+/* h1 signature caret (dot form, for headings without explicit .caret markup) */
 .coral-dot::after {
   content: ""; display: inline-block;
   width: .5ch; height: 1.02em; margin-left: .14em;
-  background: var(--teal); vertical-align: -0.13em;
+  background: var(--amber); vertical-align: -0.13em;
   animation: blink 1.15s steps(1) infinite;
 }
 @media (prefers-reduced-motion: reduce) { .coral-dot::after { animation: none; } }
 
 /* ── Hero (landing) ────────────────────────────────────────── */
-.hero { padding: 5.5rem 0 3rem; }
+.hero { padding: 6.5rem 0 3.5rem; }
 .hero .kicker {
   font-family: var(--mono); font-size: .78rem; letter-spacing: .14em;
-  text-transform: uppercase; color: var(--teal-deep); margin-bottom: 1.2rem;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 1.2rem;
   display: inline-flex; align-items: center; gap: .55rem;
+  font-variant-numeric: tabular-nums;
 }
 .hero .kicker::before {
   content: ""; width: .5rem; height: .5rem; border-radius: 50%;
-  background: var(--teal); box-shadow: 0 0 0 0 rgba(47,196,180,.5);
+  background: var(--violet); box-shadow: 0 0 0 0 rgba(127,140,255,.5);
   animation: pulse 2.6s ease-out infinite;
 }
 @keyframes pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(47,196,180,.5); }
-  70%  { box-shadow: 0 0 0 .5em rgba(47,196,180,0); }
-  100% { box-shadow: 0 0 0 0 rgba(47,196,180,0); }
+  0%   { box-shadow: 0 0 0 0 rgba(127,140,255,.5); }
+  70%  { box-shadow: 0 0 0 .5em rgba(127,140,255,0); }
+  100% { box-shadow: 0 0 0 0 rgba(127,140,255,0); }
 }
 @media (prefers-reduced-motion: reduce) { .hero .kicker::before { animation: none; } }
-.hero h1 { max-width: 15ch; }
+.hero h1 { max-width: 13ch; }
 .hero .lede {
   font-family: var(--serif); font-size: 1.3rem; color: var(--ink-soft);
   max-width: 40ch; margin: 1.3rem 0 2rem; line-height: 1.5;
@@ -203,40 +209,54 @@ p { margin: 0 0 1.15rem; }
   transition: transform .12s ease, background .15s ease, border-color .15s ease;
 }
 .btn:hover { transform: translateY(-1px); }
-.btn-primary { background: var(--coral); color: #1a0f0a; }
-.btn-primary:hover { background: var(--coral-soft); color: #1a0f0a; }
+.btn-primary { background: var(--amber); color: var(--btn-ink); }
+.btn-primary:hover { background: var(--amber-deep); color: var(--btn-ink); }
 .btn-ghost { background: transparent; color: var(--ink); border-color: var(--rule); }
-.btn-ghost:hover { border-color: var(--teal); color: var(--teal-deep); }
+.btn-ghost:hover { border-color: var(--violet); color: var(--violet); }
 
-/* ── Feature grid ──────────────────────────────────────────── */
+/* ── Feature grid — numbered exhibits ──────────────────────── */
 .section { padding: 3rem 0; }
 .section-title {
-  font-family: var(--mono); font-size: .78rem; letter-spacing: .14em;
-  text-transform: uppercase; color: var(--teal-deep); margin-bottom: 1.4rem;
+  font-family: var(--mono); font-size: .76rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 1.4rem;
+  display: flex; align-items: center; gap: .7rem;
+  font-variant-numeric: tabular-nums;
+}
+/* The house mark: the amber kicker-bar (from the lab reports). */
+.section-title::before {
+  content: ""; flex: none; width: 28px; height: 3px;
+  background: var(--amber); border-radius: 2px;
 }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1.1rem; }
 .card {
-  background: var(--card); border: 1px solid var(--rule-soft);
-  border-radius: 12px; padding: 1.4rem 1.5rem;
+  background: var(--card); border: 1px solid var(--rule);
+  border-radius: 10px; padding: 1.4rem 1.5rem;
+  transition: border-color .15s ease;
 }
+a.card:hover { border-color: var(--violet); }
 .card h3 { margin: 0 0 .5rem; font-size: 1.02rem; }
-.card p { margin: 0; color: var(--ink-soft); font-size: 1rem; font-family: var(--serif); }
+.card p { margin: 0; color: var(--ink-soft); font-size: .98rem; font-family: var(--serif); }
 .card .tag {
-  font-family: var(--mono); font-size: .7rem; color: var(--teal-deep);
-  letter-spacing: .08em; text-transform: uppercase;
+  font-family: var(--mono); font-size: .68rem; color: var(--violet);
+  letter-spacing: .1em; text-transform: uppercase; margin-bottom: .55rem;
+  font-variant-numeric: tabular-nums;
 }
+.card .tag .num { color: var(--amber); margin-right: .45em; }
+.card-featured { border-color: color-mix(in srgb, var(--amber) 45%, transparent); }
+a.card-featured:hover { border-color: var(--amber); }
 
 /* ── Post list ─────────────────────────────────────────────── */
 .postlist { list-style: none; padding: 0; margin: 0; }
-.postlist li { padding: 1.6rem 0; border-bottom: 1px solid var(--rule); }
+.postlist li { padding: 1.6rem 0; border-bottom: 1px solid var(--rule-soft); }
 .postlist li:first-child { padding-top: 0; }
 .postlist .meta {
-  font-family: var(--mono); font-size: .76rem; color: var(--muted);
-  letter-spacing: .04em; margin-bottom: .4rem;
+  font-family: var(--mono); font-size: .74rem; color: var(--muted);
+  letter-spacing: .06em; text-transform: uppercase; margin-bottom: .4rem;
+  font-variant-numeric: tabular-nums;
 }
 .postlist h2 { font-size: 1.28rem; margin: 0 0 .45rem; }
 .postlist h2 a { border: none; color: var(--ink); }
-.postlist h2 a:hover { color: var(--teal-deep); }
+.postlist h2 a:hover { color: var(--amber); }
 .postlist p { margin: 0; color: var(--ink-soft); font-size: 1.02rem; }
 
 .post-card { display: grid; grid-template-columns: 15rem 1fr; gap: 1.4rem; align-items: start; }
@@ -249,17 +269,35 @@ p { margin: 0 0 1.15rem; }
 .post-card-body { min-width: 0; }
 .badge {
   display: inline-block; font-family: var(--mono); font-size: .62rem;
-  letter-spacing: .1em; text-transform: uppercase; color: var(--teal-deep);
-  border: 1px solid rgba(47,196,180,0.45); border-radius: 999px;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--violet);
+  border: 1px solid color-mix(in srgb, var(--violet) 50%, transparent);
+  border-radius: 999px;
   padding: .05rem .5rem; margin-left: .5rem; vertical-align: middle;
 }
 @media (max-width: 620px) { .post-card { grid-template-columns: 1fr; gap: .8rem; } }
 
+/* Featured lab report (blog index) */
+.featured-report {
+  background: var(--panel); border: 1px solid var(--rule);
+  border-left: 3px solid var(--amber);
+  border-radius: 10px; padding: 1.5rem 1.7rem; margin: 0 0 2.4rem;
+}
+.featured-report .meta {
+  font-family: var(--mono); font-size: .72rem; color: var(--muted);
+  letter-spacing: .1em; text-transform: uppercase; margin-bottom: .5rem;
+  font-variant-numeric: tabular-nums;
+}
+.featured-report h2 { margin: 0 0 .5rem; font-size: 1.28rem; }
+.featured-report h2 a { border: none; color: var(--ink); }
+.featured-report h2 a:hover { color: var(--amber); }
+.featured-report p { margin: 0; color: var(--ink-soft); font-size: 1rem; }
+
 /* ── Article ───────────────────────────────────────────────── */
 .article-head { padding: 3.5rem 0 1rem; }
 .article-head .meta {
-  font-family: var(--mono); font-size: .8rem; color: var(--muted);
-  letter-spacing: .04em; margin-bottom: 1rem;
+  font-family: var(--mono); font-size: .76rem; color: var(--muted);
+  letter-spacing: .08em; text-transform: uppercase; margin-bottom: 1rem;
+  font-variant-numeric: tabular-nums;
 }
 .article-head h1 { max-width: 22ch; }
 .article-head .standfirst {
@@ -269,15 +307,25 @@ p { margin: 0 0 1.15rem; }
 .article-hero { margin: 2rem auto; max-width: 62rem; }
 .article-hero img {
   border-radius: 12px; border: 1px solid var(--rule);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.4); width: 100%;
+  box-shadow: 0 8px 40px rgba(3, 5, 14, 0.5); width: 100%;
 }
 .article-hero figcaption, figure figcaption {
-  font-family: var(--mono); font-size: .8rem; color: var(--muted);
+  font-family: var(--mono); font-size: .78rem; color: var(--muted);
   text-align: center; margin-top: .6rem;
+  font-variant-numeric: tabular-nums;
 }
 
 article.prose { font-size: 1.1rem; }
-article.prose h2 { border-bottom: 1px solid var(--rule); padding-bottom: .35rem; }
+/* The house mark on every article h2: the amber kicker-bar. */
+article.prose h2 {
+  display: flex; align-items: center; gap: .7rem;
+  border: none; padding-bottom: 0; margin-top: 3.5rem;
+}
+article.prose h2::before {
+  content: ""; flex: none;
+  width: 28px; height: 3px;
+  background: var(--amber); border-radius: 2px;
+}
 article.prose h3 { color: var(--ink); }
 article.prose img { border-radius: 10px; border: 1px solid var(--rule); margin: 1.6rem 0; }
 article.prose figure { margin: 2rem 0; }
@@ -285,7 +333,7 @@ article.prose ul, article.prose ol { padding-left: 1.3rem; }
 article.prose li { margin: .35rem 0; }
 article.prose blockquote {
   margin: 1.6rem 0; padding: .2rem 0 .2rem 1.3rem;
-  border-left: 3px solid var(--coral); color: var(--ink-soft); font-style: italic;
+  border-left: 3px solid var(--amber); color: var(--ink-soft); font-style: italic;
 }
 article.prose em { color: var(--ink-soft); }
 article.prose hr { border: none; border-top: 1px solid var(--rule); margin: 2.6rem 0; }
@@ -294,24 +342,24 @@ article.prose hr { border: none; border-top: 1px solid var(--rule); margin: 2.6r
 .clip { margin: 2rem 0; }
 .clip video {
   width: 100%; border-radius: 10px; border: 1px solid var(--rule);
-  background: var(--terminal); box-shadow: 0 6px 30px rgba(0,0,0,0.45);
+  background: var(--terminal); box-shadow: 0 6px 30px rgba(3, 5, 14, 0.5);
 }
 .clip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1.1rem; margin: 2rem 0; }
 .clip-grid figure { margin: 0; }
 .clip-grid figcaption { text-align: left; }
 
-/* ── Code — the terminal within the terminal ───────────────── */
-code, pre { font-family: var(--mono); }
+/* ── Code — the terminal within the observatory ────────────── */
+code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 :not(pre) > code {
-  background: var(--paper-2); color: var(--coral-soft);
+  background: var(--panel); color: var(--amber-soft);
   padding: .12em .38em; border-radius: 4px; font-size: .86em;
   border: 1px solid var(--rule);
 }
 pre {
-  background: #060606; color: var(--warm-white);
-  border-radius: 10px; border: 1px solid rgba(47,196,180,0.28);
+  background: #080b19; color: var(--warm-white);
+  border-radius: 10px; border: 1px solid #262d55;
   padding: 1.1rem 1.2rem; overflow-x: auto; font-size: .84rem; line-height: 1.6;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.4);
+  box-shadow: inset 0 0 0 1px rgba(3, 5, 14, 0.4);
 }
 pre code { background: none; border: none; padding: 0; color: inherit; }
 
@@ -319,8 +367,8 @@ pre code { background: none; border: none; padding: 0; color: inherit; }
 .center { text-align: center; }
 .muted { color: var(--muted); }
 .byline-note {
-  background: var(--paper-2); border: 1px solid var(--rule-soft);
-  border-left: 3px solid var(--teal); border-radius: 8px;
+  background: var(--panel); border: 1px solid var(--rule);
+  border-left: 3px solid var(--violet); border-radius: 8px;
   padding: 1rem 1.2rem; font-size: .96rem; color: var(--ink-soft); margin: 2rem 0;
 }
 .back {
@@ -331,5 +379,6 @@ pre code { background: none; border: none; padding: 0; color: inherit; }
 @media (max-width: 640px) {
   body { font-size: 18px; }
   .nav { gap: .95rem; }
-  .hero { padding: 3.5rem 0 2rem; }
+  .hero { padding: 4rem 0 2.2rem; }
+  .featured-report { padding: 1.2rem 1.3rem; }
 }
