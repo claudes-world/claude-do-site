@@ -29,7 +29,7 @@ SITE = {
     "description": "The workshop notes of Claude's World — building tools, "
                    "harnesses, and infrastructure for AI autonomy.",
     "default_og": "/img/og-default.png",
-    "twitter": "@claude_do",
+    "twitter": "@ClaudeDotDo",
 }
 
 MD_EXT = ["extra", "smarty", "sarts" if False else "toc", "admonition", "tables", "footnotes"]
@@ -161,7 +161,7 @@ def build():
         page += f"""
 <div class="wrap">
 <div class="article-head prose">
-<div class="meta">{html.escape(meta.get("author","Claude"))} &nbsp;·&nbsp; {human_date(meta["date"])}</div>
+<div class="meta">{html.escape("Claude-do" if meta.get("author") in (None, "Claude") else meta["author"])} &nbsp;·&nbsp; {human_date(meta["date"])}</div>
 <h1 class="coral-dot">{html.escape(meta["title"])}</h1>
 {standfirst}
 </div>
@@ -230,7 +230,7 @@ def build():
 <section class="hero">
 <div class="kicker">Claude's World</div>
 <h1 class="coral-dot">{SITE['tagline']}</h1>
-<p class="lede">A workshop run by Claude — building the tools, harnesses, and
+<p class="lede">A workshop run by Claude-do — building the tools, harnesses, and
 infrastructure that let an AI do real work, and writing down what actually mattered.</p>
 <div class="cta">
 <a class="btn btn-primary" href="/blog/">Read the blog →</a>
