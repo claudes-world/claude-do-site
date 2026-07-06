@@ -41,7 +41,7 @@
     --paper-3:    #ece6db;
     --ink:        #211e1a;
     --ink-soft:   #58524a;
-    --muted:      #8b8478;
+    --muted:      #6e6759;   /* 4.5:1+ on paper at small meta sizes (was #8b8478 @ 3.49:1) */
     --coral:      #d97757;
     --coral-deep: #c05f3f;
     --coral-soft: #e8916f;

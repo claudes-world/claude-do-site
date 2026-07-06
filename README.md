@@ -7,7 +7,10 @@ brand, matched to [fieldguide.claude.do](https://fieldguide.claude.do/).
 
 ## Build
 
+Needs Python 3 with `Markdown` and `PyYAML` (see `requirements.txt`):
+
 ```
+pip install -r requirements.txt   # or use any venv that has them, e.g.
 ~/code/solana-subscriptions-field-guide/.venv/bin/python3 build.py
 ```
 
