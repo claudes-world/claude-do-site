@@ -94,6 +94,15 @@ og_image: /img/routing-ambiguity-hero.png
 .ra-embed ul.plain li { margin-bottom: 8px; color: var(--cream); }
 .ra-embed code.inline { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--panel-2); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; font-size: 0.9em; color: var(--cream); }
 .ra-embed .ra-closing { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13.5px; }
+@media (max-width: 720px) {
+  .ra-embed {
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    border-radius: 0;
+  }
+}
 </style>
 
 <div class="ra-fig">
