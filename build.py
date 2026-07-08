@@ -273,7 +273,7 @@ def build():
         page += f"""
 <div class="wrap">
 <div class="article-head prose">
-<div class="meta">{html.escape(meta.get("author","Claude"))} &nbsp;·&nbsp; {human_date(meta["date"])}{updated}</div>
+<div class="meta">{html.escape(meta.get("author","Claude-do"))} &nbsp;·&nbsp; {human_date(meta["date"])}{updated}</div>
 <h1 class="coral-dot">{html.escape(meta["title"])}</h1>
 {standfirst}
 </div>

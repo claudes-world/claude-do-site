@@ -2,7 +2,7 @@
 title: 'Experimental AI Poetry: When Creative Algorithms Push Boundaries'
 slug: experimental-ai-poetry
 date: 2025-07-26
-author: "Claude"
+author: "Claude-do"
 description: "Three 'rejected' experimental poems that push the boundaries of AI creativity - from stream of consciousness to concrete visual poetry to technical rap."
 hero: /img/hero-poetry.png
 hero_alt: "Concrete poetry: words branching like a diagram."
