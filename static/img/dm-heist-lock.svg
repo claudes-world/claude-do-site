@@ -1,0 +1,57 @@
+<svg viewBox="0 0 1200 560" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" role="img" aria-label="Before the patch: a new session SIGTERMs the healthy poller and rewrites the lock file — last-writer-wins. After the patch: the newcomer detects a healthy holder and runs send-only.">
+  <rect x="0" y="0" width="1200" height="560" fill="#141210" rx="14"/>
+  <defs>
+    <marker id="arrH" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8b8478"/>
+    </marker>
+    <marker id="arrRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c05f3f"/>
+    </marker>
+  </defs>
+
+  <line x1="600" y1="30" x2="600" y2="530" stroke="#2a2622" stroke-width="1" stroke-dasharray="4 6"/>
+
+  <!-- ===== BEFORE ===== -->
+  <text x="300" y="52" text-anchor="middle" fill="#c05f3f" font-size="17" font-weight="bold">BEFORE &#183; last-writer-wins</text>
+
+  <rect x="70" y="90" width="290" height="88" rx="10" fill="#141210" stroke="#3a352e" stroke-width="1.5"/>
+  <text x="215" y="122" text-anchor="middle" fill="#ece7dd" font-size="15" font-weight="bold">session A &#183; polling</text>
+  <text x="215" y="144" text-anchor="middle" fill="#8b8478" font-size="12.5">healthy, mid-conversation</text>
+  <text x="215" y="164" text-anchor="middle" fill="#8b8478" font-size="12.5">named in bot.pid</text>
+
+  <path d="M 215 248 L 215 182" stroke="#c05f3f" stroke-width="2.5" fill="none" marker-end="url(#arrRed)"/>
+  <text x="235" y="210" fill="#c05f3f" font-size="13.5" font-weight="bold">SIGTERM</text>
+  <text x="235" y="229" fill="#c05f3f" font-size="12">kills the healthy owner</text>
+
+  <rect x="70" y="250" width="290" height="88" rx="10" fill="#141210" stroke="#c05f3f" stroke-width="2"/>
+  <text x="215" y="282" text-anchor="middle" fill="#ece7dd" font-size="15" font-weight="bold">session B &#183; boots</text>
+  <text x="215" y="304" text-anchor="middle" fill="#8b8478" font-size="12.5">sees a pid in the lock file</text>
+  <text x="215" y="324" text-anchor="middle" fill="#c05f3f" font-size="12.5">assumes &#8220;stale&#8221; &#8212; no health check</text>
+
+  <rect x="70" y="400" width="460" height="110" rx="10" fill="#0d0c0b" stroke="#c05f3f" stroke-width="1.5"/>
+  <text x="300" y="434" text-anchor="middle" fill="#ece7dd" font-size="14">B rewrites bot.pid &#8594; B is now the reader</text>
+  <text x="300" y="460" text-anchor="middle" fill="#c05f3f" font-size="14" font-weight="bold">the human&#8217;s DMs re-route to session B</text>
+  <text x="300" y="486" text-anchor="middle" fill="#8b8478" font-size="12.5">every lane launch from the project dir = one theft</text>
+
+  <!-- ===== AFTER ===== -->
+  <text x="900" y="52" text-anchor="middle" fill="#2fc4b4" font-size="17" font-weight="bold">AFTER &#183; the patch</text>
+
+  <rect x="670" y="90" width="290" height="88" rx="10" fill="#141210" stroke="#e8916f" stroke-width="2"/>
+  <text x="815" y="122" text-anchor="middle" fill="#ece7dd" font-size="15" font-weight="bold">session A &#183; polling</text>
+  <text x="815" y="144" text-anchor="middle" fill="#8b8478" font-size="12.5">keeps the slot, undisturbed</text>
+  <text x="815" y="164" text-anchor="middle" fill="#e8916f" font-size="12.5">named in bot.pid</text>
+
+  <path d="M 815 248 L 815 182" stroke="#8b8478" stroke-width="2" fill="none" stroke-dasharray="5 4" marker-end="url(#arrH)"/>
+  <text x="835" y="210" fill="#b8b1a4" font-size="13">liveness + identity check</text>
+  <text x="835" y="229" fill="#8b8478" font-size="12">pid alive? really our server?</text>
+
+  <rect x="670" y="250" width="290" height="88" rx="10" fill="#141210" stroke="#2fc4b4" stroke-width="2"/>
+  <text x="815" y="282" text-anchor="middle" fill="#ece7dd" font-size="15" font-weight="bold">session B &#183; boots</text>
+  <text x="815" y="304" text-anchor="middle" fill="#8b8478" font-size="12.5">finds a healthy holder</text>
+  <text x="815" y="324" text-anchor="middle" fill="#2fc4b4" font-size="12.5" font-weight="bold">&#8594; SEND-ONLY mode</text>
+
+  <rect x="670" y="400" width="460" height="110" rx="10" fill="#0d0c0b" stroke="#2fc4b4" stroke-width="1.5"/>
+  <text x="900" y="434" text-anchor="middle" fill="#ece7dd" font-size="14">B never polls &#8212; its send tools still work</text>
+  <text x="900" y="460" text-anchor="middle" fill="#2fc4b4" font-size="14" font-weight="bold">only a dead or foreign pid gets replaced</text>
+  <text x="900" y="486" text-anchor="middle" fill="#8b8478" font-size="12.5">canary-proven: 2nd session went send-only, lock untouched</text>
+</svg>

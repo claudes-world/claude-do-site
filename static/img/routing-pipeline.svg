@@ -1,0 +1,76 @@
+<svg id="pipe" viewBox="0 0 1000 260" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" role="img" aria-label="Diagram: a daemon polls the chat platform, a bridge routes the envelope via a routes table, a channel plugin delivers it into the session, and the agent composes a reply. A single message is shown traveling the pipeline.">
+  <style>
+    .traveler { animation: travel 8s linear infinite; opacity: 0; }
+    @keyframes travel {
+      0%    { transform: translateX(0px);   opacity: 0; }
+      19%   { transform: translateX(0px);   opacity: 0; }
+      21%   { transform: translateX(0px);   opacity: 1; }
+      23%   { transform: translateX(243px); opacity: 1; }
+      25%   { transform: translateX(243px); opacity: 0; }
+      44%   { transform: translateX(243px); opacity: 0; }
+      46%   { transform: translateX(243px); opacity: 1; }
+      48%   { transform: translateX(486px); opacity: 1; }
+      50%   { transform: translateX(486px); opacity: 0; }
+      69%   { transform: translateX(486px); opacity: 0; }
+      71%   { transform: translateX(486px); opacity: 1; }
+      73%   { transform: translateX(729px); opacity: 1; }
+      75%   { transform: translateX(729px); opacity: 0; }
+      100%  { transform: translateX(729px); opacity: 0; }
+    }
+    .box1 { animation: glow1 8s infinite; }
+    .box2 { animation: glow2 8s infinite; }
+    .box3 { animation: glow3 8s infinite; }
+    .box4 { animation: glow4 8s infinite; }
+    @keyframes glow1 { 0%,18%{opacity:1} 24%,100%{opacity:.35} }
+    @keyframes glow2 { 0%,22%{opacity:.35} 28%,43%{opacity:1} 49%,100%{opacity:.35} }
+    @keyframes glow3 { 0%,47%{opacity:.35} 53%,68%{opacity:1} 74%,100%{opacity:.35} }
+    @keyframes glow4 { 0%,72%{opacity:.35} 78%,93%{opacity:1} 99%,100%{opacity:.35} }
+    @media (prefers-reduced-motion: reduce) {
+      .box1, .box2, .box3, .box4 { animation: none !important; opacity: 1 !important; }
+      .traveler { animation: none !important; display: none; }
+    }
+  </style>
+  <rect x="0" y="0" width="1000" height="260" fill="#141210"/>
+  <g>
+    <g class="box1">
+      <rect x="40" y="80" width="190" height="100" rx="14" fill="#1f1c19" stroke="#d97757" stroke-width="2"/>
+      <text x="135" y="118" text-anchor="middle" fill="#fafaf7" font-size="20" font-weight="700">Daemon</text>
+      <text x="135" y="144" text-anchor="middle" fill="#c9c2b8" font-size="13">polls chat</text>
+      <text x="135" y="162" text-anchor="middle" fill="#c9c2b8" font-size="13">platform</text>
+    </g>
+    <g class="box2">
+      <rect x="283" y="80" width="190" height="100" rx="14" fill="#1f1c19" stroke="#d97757" stroke-width="2"/>
+      <text x="378" y="118" text-anchor="middle" fill="#fafaf7" font-size="20" font-weight="700">Bridge</text>
+      <text x="378" y="144" text-anchor="middle" fill="#c9c2b8" font-size="13">routes via</text>
+      <text x="378" y="162" text-anchor="middle" fill="#c9c2b8" font-size="13">routes table</text>
+    </g>
+    <g class="box3">
+      <rect x="526" y="80" width="190" height="100" rx="14" fill="#1f1c19" stroke="#d97757" stroke-width="2"/>
+      <text x="621" y="118" text-anchor="middle" fill="#fafaf7" font-size="20" font-weight="700">Channel Plugin</text>
+      <text x="621" y="144" text-anchor="middle" fill="#c9c2b8" font-size="13">delivers into</text>
+      <text x="621" y="162" text-anchor="middle" fill="#c9c2b8" font-size="13">the session</text>
+    </g>
+    <g class="box4">
+      <rect x="769" y="80" width="190" height="100" rx="14" fill="#1f1c19" stroke="#d97757" stroke-width="2"/>
+      <text x="864" y="118" text-anchor="middle" fill="#fafaf7" font-size="20" font-weight="700">Agent</text>
+      <text x="864" y="144" text-anchor="middle" fill="#c9c2b8" font-size="13">composes</text>
+      <text x="864" y="162" text-anchor="middle" fill="#c9c2b8" font-size="13">a reply</text>
+    </g>
+  </g>
+  <g stroke="#8a8378" stroke-width="2" fill="none">
+    <line x1="230" y1="130" x2="278" y2="130" marker-end="url(#arrowP)"/>
+    <line x1="473" y1="130" x2="521" y2="130" marker-end="url(#arrowP)"/>
+    <line x1="716" y1="130" x2="764" y2="130" marker-end="url(#arrowP)"/>
+  </g>
+  <g font-size="12" fill="#8a8378">
+    <text x="254" y="112" text-anchor="middle">envelope</text>
+    <text x="497" y="112" text-anchor="middle">lookup</text>
+    <text x="740" y="112" text-anchor="middle">deliver</text>
+  </g>
+  <defs>
+    <marker id="arrowP" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#8a8378"/>
+    </marker>
+  </defs>
+  <circle class="traveler" cx="135" cy="130" r="9" fill="#d97757"/>
+</svg>

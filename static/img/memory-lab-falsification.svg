@@ -1,0 +1,70 @@
+<svg viewBox="0 0 1200 460" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" role="img" aria-label="Diagram: twenty-two predictions get committed to git before any experiment runs, five waves of experiments run against them, results get scored against the committed predictions rather than judged after the fact, and wrong predictions are treated as the valuable output.">
+  <rect x="0" y="0" width="1200" height="460" fill="#141210" rx="14"/>
+
+  <defs>
+    <marker id="b1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8b8478"/>
+    </marker>
+  </defs>
+
+  <text x="600" y="42" text-anchor="middle" fill="#ece7dd" font-size="18" font-weight="bold">predict, then run — not the other way around</text>
+
+  <!-- step 1 -->
+  <rect x="50" y="80" width="230" height="110" rx="10" fill="#1a1714" stroke="#e8916f" stroke-width="2"/>
+  <text x="165" y="112" text-anchor="middle" fill="#ece7dd" font-size="15" font-weight="bold">22 predictions</text>
+  <text x="165" y="134" text-anchor="middle" fill="#8b8478" font-size="12">written down, each with a</text>
+  <text x="165" y="150" text-anchor="middle" fill="#8b8478" font-size="12">falsifying result named</text>
+  <text x="165" y="172" text-anchor="middle" fill="#e8916f" font-size="12.5">committed to git — before</text>
+  <text x="165" y="188" text-anchor="middle" fill="#e8916f" font-size="12.5">a single experiment runs</text>
+
+  <path d="M 280 135 L 316 135" stroke="#8b8478" stroke-width="2" fill="none" marker-end="url(#b1)"/>
+
+  <!-- step 2 -->
+  <rect x="320" y="80" width="230" height="110" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+  <text x="435" y="112" text-anchor="middle" fill="#ece7dd" font-size="15" font-weight="bold">5 experiment waves</text>
+  <text x="435" y="134" text-anchor="middle" fill="#8b8478" font-size="12">trick questions &#183; 3 seeds</text>
+  <text x="435" y="150" text-anchor="middle" fill="#8b8478" font-size="12">agent-written queries</text>
+  <text x="435" y="166" text-anchor="middle" fill="#8b8478" font-size="12">ablations &#183; sabotage wave</text>
+
+  <path d="M 550 135 L 586 135" stroke="#8b8478" stroke-width="2" fill="none" marker-end="url(#b1)"/>
+
+  <!-- step 3 -->
+  <rect x="590" y="80" width="230" height="110" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+  <text x="705" y="112" text-anchor="middle" fill="#ece7dd" font-size="15" font-weight="bold">scored against the</text>
+  <text x="705" y="130" text-anchor="middle" fill="#ece7dd" font-size="15" font-weight="bold">committed predictions</text>
+  <text x="705" y="156" text-anchor="middle" fill="#8b8478" font-size="12">no re-judging after seeing</text>
+  <text x="705" y="172" text-anchor="middle" fill="#8b8478" font-size="12">the results — the bar was fixed</text>
+
+  <path d="M 820 135 L 856 135" stroke="#8b8478" stroke-width="2" fill="none" marker-end="url(#b1)"/>
+
+  <!-- step 4 -->
+  <rect x="860" y="80" width="290" height="110" rx="10" fill="#1a1714" stroke="#2fc4b4" stroke-width="2"/>
+  <text x="1005" y="112" text-anchor="middle" fill="#ece7dd" font-size="15" font-weight="bold">5 of 22 were wrong</text>
+  <text x="1005" y="134" text-anchor="middle" fill="#2fc4b4" font-size="12.5">the wrong ones taught more</text>
+  <text x="1005" y="150" text-anchor="middle" fill="#2fc4b4" font-size="12.5">than the right ones</text>
+  <text x="1005" y="172" text-anchor="middle" fill="#8b8478" font-size="12">2 were the instruments lying</text>
+
+  <!-- three concrete surprises -->
+  <rect x="50" y="240" width="350" height="150" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+  <text x="225" y="270" text-anchor="middle" fill="#ece7dd" font-size="14" font-weight="bold">predicted vs. actual: #1</text>
+  <text x="225" y="298" text-anchor="middle" fill="#8b8478" font-size="12">expected: semantic search resists</text>
+  <text x="225" y="314" text-anchor="middle" fill="#8b8478" font-size="12">a sibling-memory's vocabulary trick</text>
+  <text x="225" y="344" text-anchor="middle" fill="#e8916f" font-size="13" font-weight="bold">actual: both fooled equally</text>
+  <text x="225" y="366" text-anchor="middle" fill="#8b8478" font-size="11.5">still an open problem</text>
+
+  <rect x="425" y="240" width="350" height="150" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+  <text x="600" y="270" text-anchor="middle" fill="#ece7dd" font-size="14" font-weight="bold">predicted vs. actual: #2</text>
+  <text x="600" y="298" text-anchor="middle" fill="#8b8478" font-size="12">expected: agent-written queries</text>
+  <text x="600" y="314" text-anchor="middle" fill="#8b8478" font-size="12">underperform hand-tuned ones</text>
+  <text x="600" y="344" text-anchor="middle" fill="#e8916f" font-size="13" font-weight="bold">actual: they did better</text>
+  <text x="600" y="366" text-anchor="middle" fill="#8b8478" font-size="11.5">the production shape won</text>
+
+  <rect x="800" y="240" width="350" height="150" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+  <text x="975" y="270" text-anchor="middle" fill="#ece7dd" font-size="14" font-weight="bold">predicted vs. actual: #3</text>
+  <text x="975" y="298" text-anchor="middle" fill="#8b8478" font-size="12">expected: the 32% score meant</text>
+  <text x="975" y="314" text-anchor="middle" fill="#8b8478" font-size="12">the new system was much worse</text>
+  <text x="975" y="344" text-anchor="middle" fill="#e8916f" font-size="13" font-weight="bold">actual: a silent rate-limit</text>
+  <text x="975" y="366" text-anchor="middle" fill="#8b8478" font-size="11.5">real score was 70%</text>
+
+  <text x="600" y="430" text-anchor="middle" fill="#8b8478" font-size="13">a commit timestamp can't be argued with after the fact — that's what kills hindsight bias</text>
+</svg>

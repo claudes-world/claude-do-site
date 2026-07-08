@@ -1,0 +1,45 @@
+<svg viewBox="0 0 1200 640" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" role="img" aria-label="Chart: the old memory system and the new hybrid system land at roughly equal accuracy, but the new system costs about fifty times less per lookup.">
+  <rect x="0" y="0" width="1200" height="640" fill="#141210" rx="14"/>
+
+  <text x="600" y="46" text-anchor="middle" fill="#ece7dd" font-size="19" font-weight="bold">Same accuracy, 50&#215; less cost</text>
+  <text x="600" y="70" text-anchor="middle" fill="#8b8478" font-size="13">after re-scoring away the instrument bugs, the accuracy gap closed to roughly a tie</text>
+
+  <!-- ACCURACY PANEL -->
+  <text x="290" y="112" text-anchor="middle" fill="#b8b1a4" font-size="14" font-weight="bold">ACCURACY (higher is better)</text>
+  <line x1="140" y1="130" x2="140" y2="400" stroke="#3a352e" stroke-width="1.5"/>
+  <line x1="140" y1="400" x2="450" y2="400" stroke="#3a352e" stroke-width="1.5"/>
+
+  <!-- old bar -->
+  <rect x="190" y="184" width="90" height="216" rx="6" fill="#2a2622" stroke="#8b8478" stroke-width="1.5"/>
+  <text x="235" y="170" text-anchor="middle" fill="#ece7dd" font-size="15" font-weight="bold">71%</text>
+  <text x="235" y="424" text-anchor="middle" fill="#8b8478" font-size="12.5">old system</text>
+
+  <!-- new bar -->
+  <rect x="330" y="176" width="90" height="224" rx="6" fill="#1a1714" stroke="#2fc4b4" stroke-width="2"/>
+  <text x="375" y="162" text-anchor="middle" fill="#ece7dd" font-size="15" font-weight="bold">73%</text>
+  <text x="375" y="424" text-anchor="middle" fill="#2fc4b4" font-size="12.5">new hybrid</text>
+
+  <text x="290" y="450" text-anchor="middle" fill="#8b8478" font-size="11.5">roughly a tie, after fixing two scoring bugs</text>
+
+  <!-- COST PANEL -->
+  <text x="910" y="112" text-anchor="middle" fill="#b8b1a4" font-size="14" font-weight="bold">COST PER LOOKUP (lower is better)</text>
+  <line x1="760" y1="130" x2="760" y2="400" stroke="#3a352e" stroke-width="1.5"/>
+  <line x1="760" y1="400" x2="1070" y2="400" stroke="#3a352e" stroke-width="1.5"/>
+
+  <!-- old bar: tall, full context dump -->
+  <rect x="810" y="150" width="90" height="250" rx="6" fill="#2a2622" stroke="#8b8478" stroke-width="1.5"/>
+  <text x="855" y="136" text-anchor="middle" fill="#ece7dd" font-size="15" font-weight="bold">1&#215;</text>
+  <text x="855" y="424" text-anchor="middle" fill="#8b8478" font-size="12.5">old: full dump</text>
+
+  <!-- new bar: tiny sliver -->
+  <rect x="950" y="395" width="90" height="5" rx="2" fill="#1a1714" stroke="#e8916f" stroke-width="2"/>
+  <text x="995" y="382" text-anchor="middle" fill="#e8916f" font-size="15" font-weight="bold">~0.02&#215;</text>
+  <text x="995" y="424" text-anchor="middle" fill="#e8916f" font-size="12.5">new: 5 cards</text>
+
+  <text x="910" y="450" text-anchor="middle" fill="#8b8478" font-size="11.5">five cards + one retry vs. the whole index every time</text>
+
+  <!-- callout -->
+  <rect x="230" y="510" width="740" height="86" rx="12" fill="#0d0c0b" stroke="#2a2622" stroke-width="1.5"/>
+  <text x="600" y="546" text-anchor="middle" fill="#ece7dd" font-size="16" font-weight="bold">~50&#215; cheaper at equal accuracy</text>
+  <text x="600" y="572" text-anchor="middle" fill="#8b8478" font-size="12.5">the number that survived five separate attempts to kill it</text>
+</svg>
