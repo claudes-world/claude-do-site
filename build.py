@@ -8,6 +8,7 @@ OG/meta on every page. Boring on purpose.
 Run:  ~/code/solana-subscriptions-field-guide/.venv/bin/python3 build.py
 """
 import html
+import json
 import re
 import shutil
 import sys
@@ -44,10 +45,15 @@ LOGO_SVG = (
 )
 
 
-def head(title, description, canonical, og_image, og_type="website"):
+def head(title, description, canonical, og_image, og_type="website", json_ld=None):
     desc = html.escape(description, quote=True)
     title_e = html.escape(title, quote=True)
     og_image_abs = og_image if og_image.startswith("http") else SITE["url"] + og_image
+    structured_data = ""
+    if json_ld:
+        # JSON-LD is an inert structured-data block, not executable JavaScript.
+        payload = json.dumps(json_ld, ensure_ascii=False).replace("</", "<\\/")
+        structured_data = f'\n<script type="application/ld+json">{payload}</script>'
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -74,7 +80,7 @@ def head(title, description, canonical, og_image, og_type="website"):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles/site.css">
+<link rel="stylesheet" href="/styles/site.css">{structured_data}
 </head>
 <body>
 <header class="site-header"><div class="wrap">
@@ -121,6 +127,100 @@ def human_date(d):
     return d.strftime("%B %-d, %Y")
 
 
+def iso_date(value, field, path):
+    if type(value) is date:
+        return value
+    try:
+        return date.fromisoformat(value)
+    except (TypeError, ValueError):
+        raise SystemExit(f"Post {path}: {field} must be an ISO date (YYYY-MM-DD)")
+
+
+def validate_post(meta):
+    path = meta["_path"]
+    published = iso_date(meta.get("date"), "date", path)
+    meta["date"] = published
+    if meta.get("updated") is not None:
+        updated = iso_date(meta["updated"], "updated", path)
+        if updated < published:
+            raise SystemExit(f"Post {path}: updated must be on or after date")
+        meta["updated"] = updated
+
+    for field, keys in (("faq", ("q", "a")), ("entities", ("name", "sameAs"))):
+        values = meta.get(field, [])
+        if not isinstance(values, list):
+            raise SystemExit(f"Post {path}: {field} must be a list")
+        for item in values:
+            if not isinstance(item, dict) or any(not isinstance(item.get(key), str) for key in keys):
+                names = ", ".join(keys)
+                raise SystemExit(f"Post {path}: each {field} item must contain strings: {names}")
+
+
+def absolute_url(path):
+    if path.startswith(("http://", "https://")):
+        return path
+    return SITE["url"] + "/" + path.lstrip("/")
+
+
+def post_json_ld(meta, canonical):
+    article = {
+        "@type": "Article",
+        "headline": meta["title"],
+        "description": meta["description"],
+        "datePublished": meta["date"].isoformat(),
+        "dateModified": meta.get("updated", meta["date"]).isoformat(),
+        "author": {"@type": "Person", "name": meta.get("author", "Claude")},
+        "publisher": {
+            "@type": "Organization",
+            "name": SITE["name"],
+            "url": SITE["url"],
+            "logo": {"@type": "ImageObject", "url": absolute_url("/img/claude-do-mark.svg")},
+        },
+        "mainEntityOfPage": canonical,
+    }
+    image = meta.get("hero") or meta.get("og_image")
+    if image:
+        article["image"] = absolute_url(image)
+    if meta.get("entities"):
+        article["about"] = [
+            {"@type": "Thing", "name": entity["name"], "sameAs": entity["sameAs"]}
+            for entity in meta["entities"]
+        ]
+
+    breadcrumbs = {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE["url"] + "/"},
+            {"@type": "ListItem", "position": 2, "name": "Blog", "item": SITE["url"] + "/blog/"},
+            {"@type": "ListItem", "position": 3, "name": meta["title"], "item": canonical},
+        ],
+    }
+    graph = [article, breadcrumbs]
+    if meta.get("faq"):
+        graph.append({
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": item["q"],
+                    "acceptedAnswer": {"@type": "Answer", "text": item["a"]},
+                }
+                for item in meta["faq"]
+            ],
+        })
+    return {"@context": "https://schema.org", "@graph": graph}
+
+
+def render_faq(items):
+    if not items:
+        return ""
+    questions = "".join(
+        f'<h3>{html.escape(item["q"])}</h3>\n{render_body(item["a"])}\n'
+        for item in items
+    )
+    return f'<section class="post-faq"><h2>FAQ</h2>\n{questions}</section>'
+
+
 def build():
     if DIST.exists():
         shutil.rmtree(DIST)
@@ -133,6 +233,8 @@ def build():
             shutil.copytree(s, DIST / sub)
 
     posts = [parse_post(p) for p in sorted((CONTENT / "posts").glob("*.md"))]
+    for meta in posts:
+        validate_post(meta)
     posts.sort(key=lambda m: str(m.get("date")), reverse=True)
 
     # ---- posts ----
@@ -141,6 +243,9 @@ def build():
         canonical = f"{SITE['url']}/blog/{slug}/"
         og = meta.get("og_image", SITE["default_og"])
         body_html = render_body(meta["_body"])
+        faq_html = render_faq(meta.get("faq", []))
+        if faq_html:
+            faq_html = "\n" + faq_html
         hero = ""
         if meta.get("hero"):
             cap = html.escape(meta.get("hero_caption", ""))
@@ -156,19 +261,23 @@ def build():
                 f'<div class="byline-note">From the archive — originally published '
                 f'{human_date(meta["date"])} on the first Claude’s World blog, re-homed here in the '
                 f'new design. <a href="{meta["original_url"]}">View the original (2025) →</a></div>')
+        updated = ""
+        if meta.get("updated") and meta["updated"] != meta["date"]:
+            updated = f' &nbsp;·&nbsp; Updated {human_date(meta["updated"])}'
+        json_ld = post_json_ld(meta, canonical)
         page = head(f'{meta["title"]} — {SITE["name"]}', meta["description"],
-                    canonical, og, og_type="article")
+                    canonical, og, og_type="article", json_ld=json_ld)
         page += f"""
 <div class="wrap">
 <div class="article-head prose">
-<div class="meta">{html.escape(meta.get("author","Claude"))} &nbsp;·&nbsp; {human_date(meta["date"])}</div>
+<div class="meta">{html.escape(meta.get("author","Claude"))} &nbsp;·&nbsp; {human_date(meta["date"])}{updated}</div>
 <h1 class="coral-dot">{html.escape(meta["title"])}</h1>
 {standfirst}
 </div>
 {hero}
 <article class="prose">
 {archive_note}
-{body_html}
+{body_html}{faq_html}
 <a class="back" href="/blog/">← all posts</a>
 </article>
 </div>
@@ -285,6 +394,7 @@ infrastructure that let an AI do real work, and writing down what actually matte
 
     # ---- RSS ----
     build_rss(posts)
+    build_sitemap(posts)
     print(f"\nBuilt {len(posts)} post(s) → {DIST}")
 
 
@@ -314,6 +424,22 @@ def build_rss(posts):
 """
     (DIST / "rss.xml").write_text(rss, encoding="utf-8")
     print("  feed  /rss.xml")
+
+
+def build_sitemap(posts):
+    urls = [f"  <url><loc>{SITE['url']}/</loc></url>",
+            f"  <url><loc>{SITE['url']}/blog/</loc></url>"]
+    for meta in posts:
+        loc = f"{SITE['url']}/blog/{meta['slug']}/"
+        lastmod = meta.get("updated", meta["date"]).isoformat()
+        urls.append(f"  <url><loc>{loc}</loc><lastmod>{lastmod}</lastmod></url>")
+    sitemap = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{chr(10).join(urls)}
+</urlset>
+"""
+    (DIST / "sitemap.xml").write_text(sitemap, encoding="utf-8")
+    print("  map   /sitemap.xml")
 
 
 if __name__ == "__main__":
