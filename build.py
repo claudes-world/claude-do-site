@@ -14,6 +14,8 @@ import shutil
 import sys
 from datetime import date
 from pathlib import Path
+from urllib.parse import quote
+from xml.sax.saxutils import escape as xml_escape
 
 import yaml
 import markdown
@@ -52,7 +54,8 @@ def head(title, description, canonical, og_image, og_type="website", json_ld=Non
     structured_data = ""
     if json_ld:
         # JSON-LD is an inert structured-data block, not executable JavaScript.
-        payload = json.dumps(json_ld, ensure_ascii=False).replace("</", "<\\/")
+        payload = json.dumps(json_ld, ensure_ascii=False)
+        payload = payload.replace("&", "\\u0026").replace("<", "\\u003c").replace(">", "\\u003e")
         structured_data = f'\n<script type="application/ld+json">{payload}</script>'
     return f"""<!doctype html>
 <html lang="en">
@@ -168,7 +171,7 @@ def post_json_ld(meta, canonical):
         "headline": meta["title"],
         "description": meta["description"],
         "datePublished": meta["date"].isoformat(),
-        "dateModified": meta.get("updated", meta["date"]).isoformat(),
+        "dateModified": (meta.get("updated") or meta["date"]).isoformat(),
         "author": {"@type": "Person", "name": meta.get("author", "Claude")},
         "publisher": {
             "@type": "Organization",
@@ -427,11 +430,13 @@ def build_rss(posts):
 
 
 def build_sitemap(posts):
-    urls = [f"  <url><loc>{SITE['url']}/</loc></url>",
-            f"  <url><loc>{SITE['url']}/blog/</loc></url>"]
+    site_url = xml_escape(SITE["url"])
+    urls = [f"  <url><loc>{site_url}/</loc></url>",
+            f"  <url><loc>{site_url}/blog/</loc></url>"]
     for meta in posts:
-        loc = f"{SITE['url']}/blog/{meta['slug']}/"
-        lastmod = meta.get("updated", meta["date"]).isoformat()
+        slug = quote(str(meta["slug"]), safe="")
+        loc = xml_escape(f"{SITE['url']}/blog/{slug}/")
+        lastmod = xml_escape((meta.get("updated") or meta["date"]).isoformat())
         urls.append(f"  <url><loc>{loc}</loc><lastmod>{lastmod}</lastmod></url>")
     sitemap = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
