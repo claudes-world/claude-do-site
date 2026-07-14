@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" role="img" aria-label="Org chart: a human boss at the top, a Director AI general manager below, and ten specialist AI agents underneath" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+  <rect width="1000" height="620" fill="#141210"/>
+
+  <text x="500" y="52" text-anchor="middle" fill="#ece7dd" font-size="19" font-weight="bold">the org chart</text>
+
+  <!-- tier 1: human -->
+  <rect x="360" y="86" width="280" height="76" rx="14" fill="#1a1714" stroke="#e8916f" stroke-width="2"/>
+  <text x="500" y="118" text-anchor="middle" fill="#ece7dd" font-size="16" font-weight="bold">the human</text>
+  <text x="500" y="142" text-anchor="middle" fill="#8b8478" font-size="12.5">decides · approves · dreams it up</text>
+
+  <!-- connector 1 -->
+  <line x1="500" y1="162" x2="500" y2="212" stroke="#8b8478" stroke-width="2"/>
+  <text x="520" y="192" fill="#8b8478" font-size="12.5">voice notes, both ways</text>
+
+  <!-- tier 2: director -->
+  <rect x="340" y="212" width="320" height="76" rx="14" fill="#1a1714" stroke="#2fc4b4" stroke-width="2"/>
+  <text x="500" y="244" text-anchor="middle" fill="#ece7dd" font-size="16" font-weight="bold">the Director</text>
+  <text x="500" y="268" text-anchor="middle" fill="#8b8478" font-size="12.5">AI general manager · runs the fleet</text>
+
+  <!-- connector 2 -->
+  <line x1="500" y1="288" x2="500" y2="322" stroke="#8b8478" stroke-width="2"/>
+  <text x="520" y="310" fill="#8b8478" font-size="12.5">hands out work, checks quality</text>
+
+  <!-- tier 3: specialists, 2 rows of 5 -->
+  <g font-size="13" fill="#ece7dd" text-anchor="middle">
+    <rect x="70"  y="338" width="160" height="56" rx="10" fill="#0d0c0b" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="150" y="371">bug fixer</text>
+    <rect x="250" y="338" width="160" height="56" rx="10" fill="#0d0c0b" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="330" y="371">app UI</text>
+    <rect x="430" y="338" width="160" height="56" rx="10" fill="#0d0c0b" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="510" y="371">phone console</text>
+    <rect x="610" y="338" width="160" height="56" rx="10" fill="#0d0c0b" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="690" y="371">notifications</text>
+    <rect x="790" y="338" width="160" height="56" rx="10" fill="#0d0c0b" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="870" y="371">test squad</text>
+
+    <rect x="70"  y="418" width="160" height="56" rx="10" fill="#0d0c0b" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="150" y="451">crash-proofing</text>
+    <rect x="250" y="418" width="160" height="56" rx="10" fill="#0d0c0b" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="330" y="451">analytics</text>
+    <rect x="430" y="418" width="160" height="56" rx="10" fill="#0d0c0b" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="510" y="451">memory system</text>
+    <rect x="610" y="418" width="160" height="56" rx="10" fill="#0d0c0b" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="690" y="451">contacts app</text>
+    <rect x="790" y="418" width="160" height="56" rx="10" fill="#0d0c0b" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="870" y="451">releases</text>
+  </g>
+
+  <text x="500" y="520" text-anchor="middle" fill="#8b8478" font-size="12.5">…and more — each one a very fast, very focused software engineer</text>
+  <text x="500" y="576" text-anchor="middle" fill="#8b8478" font-size="12.5">the Director only interrupts the human for real decisions</text>
+</svg>

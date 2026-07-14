@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" role="img" aria-label="Donut chart of an 11-job overnight mission: 6 jobs shipped, 4 in final review, 1 queued" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+  <rect width="1000" height="520" fill="#141210"/>
+
+  <text x="500" y="52" text-anchor="middle" fill="#ece7dd" font-size="19" font-weight="bold">the overnight mission: 11 big jobs</text>
+
+  <!-- donut: r=140, C≈879.65 -->
+  <g transform="rotate(-90 300 290)">
+    <circle cx="300" cy="290" r="140" fill="none" stroke="#e8916f" stroke-width="46"
+            stroke-dasharray="479.8 879.65" stroke-dashoffset="0"/>
+    <circle cx="300" cy="290" r="140" fill="none" stroke="#2fc4b4" stroke-width="46"
+            stroke-dasharray="319.9 879.65" stroke-dashoffset="-479.8"/>
+    <circle cx="300" cy="290" r="140" fill="none" stroke="#8b8478" stroke-width="46"
+            stroke-dasharray="79.95 879.65" stroke-dashoffset="-799.7"/>
+  </g>
+  <text x="300" y="282" text-anchor="middle" fill="#ece7dd" font-size="34" font-weight="bold">11</text>
+  <text x="300" y="312" text-anchor="middle" fill="#8b8478" font-size="13">big jobs</text>
+
+  <!-- legend -->
+  <g font-size="15">
+    <rect x="590" y="196" width="18" height="18" rx="4" fill="#e8916f"/>
+    <text x="626" y="211" fill="#ece7dd" font-weight="bold">6 shipped</text>
+    <text x="626" y="233" fill="#8b8478" font-size="12.5">done, tested, delivered</text>
+
+    <rect x="590" y="272" width="18" height="18" rx="4" fill="#2fc4b4"/>
+    <text x="626" y="287" fill="#ece7dd" font-weight="bold">4 in final checks</text>
+    <text x="626" y="309" fill="#8b8478" font-size="12.5">AI inspectors reviewing</text>
+
+    <rect x="590" y="348" width="18" height="18" rx="4" fill="#8b8478"/>
+    <text x="626" y="363" fill="#ece7dd" font-weight="bold">1 queued</text>
+    <text x="626" y="385" fill="#8b8478" font-size="12.5">the grand-finale stress test</text>
+  </g>
+
+  <text x="500" y="486" text-anchor="middle" fill="#8b8478" font-size="12.5">the live scoreboard, mid-afternoon on mission day</text>
+</svg>
