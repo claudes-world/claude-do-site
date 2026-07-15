@@ -1,0 +1,63 @@
+---
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import { absoluteUrl, serializeJsonLd } from '../blog-core/seo';
+import type { BrandConfig } from '../blog-core/types';
+
+interface Props {
+  brand: BrandConfig;
+  title: string;
+  description: string;
+  canonical: string;
+  ogImage?: string;
+  ogType?: string;
+  jsonLd?: unknown;
+}
+
+const {
+  brand,
+  title,
+  description,
+  canonical,
+  ogImage = brand.defaultOgImage,
+  ogType = 'website',
+  jsonLd,
+} = Astro.props;
+const ogImageAbsolute = absoluteUrl(brand, ogImage);
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <link rel="icon" type="image/svg+xml" href={brand.icon} />
+  <link rel="alternate" type="application/rss+xml" title={brand.name} href={`${brand.url}/rss.xml`} />
+  <!-- Open Graph -->
+  <meta property="og:type" content={ogType} />
+  <meta property="og:site_name" content={brand.name} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={ogImageAbsolute} />
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImageAbsolute} />
+  <meta name="twitter:site" content={brand.twitter} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/site.css" />
+  {jsonLd && <script is:inline type="application/ld+json" set:html={serializeJsonLd(jsonLd)} />}
+</head>
+<body>
+  <SiteHeader brand={brand} />
+  <slot />
+  <SiteFooter brand={brand} />
+</body>
+</html>
