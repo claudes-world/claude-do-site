@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content';
+import { humanDate, sortPosts } from '../../blog-core/dates';
+import { brand } from '../../config/brand';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = sortPosts(await getCollection('posts'));
+---
+
+<BaseLayout
+  brand={brand}
+  title={`Blog — ${brand.name}`}
+  description={brand.blogDescription}
+  canonical={`${brand.url}/blog/`}
+>
+  <div class="wrap prose">
+    <div class="article-head">
+      <div class="meta">Field notes</div>
+      <h1 class="coral-dot">Blog</h1>
+      <p class="standfirst">Workshop notes — what actually mattered while building.</p>
+    </div>
+    <ul class="postlist">
+      {posts.map((post) => {
+        const thumb = post.data.hero || post.data.og_image || brand.defaultOgImage;
+        return (
+          <li class="post-card">
+            <a class="thumb" href={`/blog/${post.data.slug}/`} aria-hidden="true" tabindex="-1"><img src={thumb} alt="" loading="lazy" /></a>
+            <div class="post-card-body">
+              <div class="meta">{humanDate(post.data.date)} {post.data.archive && <span class="badge">Archive</span>}</div>
+              <h2><a href={`/blog/${post.data.slug}/`}>{post.data.title}</a></h2>
+              <p>{post.data.description}</p>
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+    <a class="back" href="/">← home</a>
+  </div>
+</BaseLayout>

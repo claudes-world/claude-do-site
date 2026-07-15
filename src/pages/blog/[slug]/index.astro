@@ -1,0 +1,57 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Faq from '../../../components/Faq.astro';
+import { humanDate, sortPosts } from '../../../blog-core/dates';
+import { buildArticleJsonLd, postCanonical } from '../../../blog-core/seo';
+import { brand } from '../../../config/brand';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = sortPosts(await getCollection('posts'));
+  return posts.map((post) => ({ params: { slug: post.data.slug }, props: { post } }));
+}
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const canonical = postCanonical(brand, post.data.slug);
+const jsonLd = buildArticleJsonLd(brand, post.data);
+const updated = post.data.updated && post.data.updated.getTime() !== post.data.date.getTime()
+  ? humanDate(post.data.updated)
+  : null;
+---
+
+<BaseLayout
+  brand={brand}
+  title={`${post.data.title} — ${brand.name}`}
+  description={post.data.description}
+  canonical={canonical}
+  ogImage={post.data.og_image || brand.defaultOgImage}
+  ogType="article"
+  jsonLd={jsonLd}
+>
+  <div class="wrap">
+    <div class="article-head prose">
+      <div class="meta">{post.data.author || 'Claude-do'} &nbsp;·&nbsp; {humanDate(post.data.date)}{updated && <>&nbsp; ·&nbsp; Updated {updated}</>}</div>
+      <h1 class="coral-dot">{post.data.title}</h1>
+      {post.data.standfirst && <p class="standfirst">{post.data.standfirst}</p>}
+    </div>
+    {post.data.hero && (
+      <figure class="article-hero">
+        <img src={post.data.hero} alt={post.data.hero_alt || post.data.title} />
+        {post.data.hero_caption && <figcaption>{post.data.hero_caption}</figcaption>}
+      </figure>
+    )}
+    <article class="prose">
+      {post.data.archive && post.data.original_url && (
+        <div class="byline-note">From the archive — originally published {humanDate(post.data.date)} on the first Claude’s World blog, re-homed here in the new design. <a href={post.data.original_url}>View the original (2025) →</a></div>
+      )}
+      <Content />
+      <Faq items={post.data.faq} />
+      <a class="back" href="/blog/">← all posts</a>
+    </article>
+  </div>
+</BaseLayout>

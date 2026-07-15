@@ -2,3 +2,6 @@ dist/
 __pycache__/
 *.pyc
 .DS_Store
+node_modules/
+.astro/
+.migration-artifacts/

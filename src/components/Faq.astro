@@ -1,0 +1,22 @@
+---
+import { createMarkdownProcessor } from '@astrojs/markdown-remark';
+import type { FaqItem } from '../blog-core/types';
+
+interface Props {
+  items?: FaqItem[];
+}
+
+const { items = [] } = Astro.props;
+const markdown = await createMarkdownProcessor({ gfm: true, smartypants: true });
+const rendered = await Promise.all(
+  items.map(async (item) => ({ item, html: (await markdown.render(item.a)).code })),
+);
+---
+
+{rendered.length > 0 && (
+  <section class="post-faq"><h2>FAQ</h2>
+    {rendered.map(({ item, html }) => <><h3>{item.q}</h3>
+      <Fragment set:html={html} />
+    </>)}
+  </section>
+)}
