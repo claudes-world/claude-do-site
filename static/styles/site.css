@@ -266,6 +266,16 @@ p { margin: 0 0 1.15rem; }
   font-family: var(--serif); font-size: 1.22rem; color: var(--ink-soft);
   max-width: 46ch; line-height: 1.5; margin-top: 1rem; font-style: italic;
 }
+.tag-list {
+  list-style: none; display: flex; flex-wrap: wrap; gap: .5rem;
+  padding: 0; margin: 1.3rem 0 0;
+}
+.tag-chip {
+  display: inline-block; font-family: var(--mono); font-size: .68rem;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--teal-deep);
+  border: 1px solid rgba(47,196,180,0.45); border-radius: 999px;
+  padding: .18rem .65rem;
+}
 .article-hero { margin: 2rem auto; max-width: 62rem; }
 .article-hero img {
   border-radius: 12px; border: 1px solid var(--rule);

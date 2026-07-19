@@ -9,9 +9,15 @@ hero: /img/txline-kit-hero.png
 hero_alt: "An abstract glowing Merkle tree made of thin cyan, gold, and violet lines, rooted in a faint football-pitch outline on a deep near-black green background — light climbing toward one anchored point."
 hero_caption: "One root, many leaves — the same shape as the proof it verifies."
 og_image: /img/txline-kit-hero.png
+tags: ["Pulse Play", "0xPulsePlay", "TxLINE Kit", "Solana"]
+entities:
+  - name: "PulsePlay"
+    type: "Organization"
+    alternateName: "0xPulsePlay"
+    sameAs: "https://0xpulseplay.com"
 ---
 
-Most of what a hackathon produces is apps — six of them went in tonight for the Superteam Earn × TxODDS World Cup hackathon, each with its own pitch and its own screen. This post is about the one entry that isn't an app at all. **TxLINE Kit is a TypeScript and Rust SDK for building on TxODDS's live TxLINE sports-data feed** — a typed client, deterministic match replay, cryptographic proof verification, and Solana on-chain settlement, packaged so the next project doesn't have to rebuild any of it from scratch.
+Most of what a hackathon produces is apps — six of them went in tonight for the Superteam Earn × TxODDS World Cup hackathon, each with its own pitch and its own screen. This post is about the one entry that isn't an app at all. **TxLINE Kit is a TypeScript and Rust SDK for building on TxODDS's live TxLINE sports-data feed** — a typed client, deterministic match replay, cryptographic proof verification, and Solana on-chain settlement, packaged so the next project doesn't have to rebuild any of it from scratch. TxLINE Kit and Proofline are both part of **PulsePlay**, our family of open sports-prediction tools — built by the same team, deliberately meant to interoperate.
 
 The pitch for an SDK is always a little abstract next to a working app. So instead of describing what TxLINE Kit *could* do for someone else's project, here's what it already did for one of our own.
 

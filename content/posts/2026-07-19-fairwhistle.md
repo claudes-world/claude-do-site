@@ -9,11 +9,17 @@ hero: /img/fairwhistle-hero.png
 hero_alt: "Abstract visualization of a single glowing teal price line spiking above a field of calm data noise, its peak sealed inside a translucent glass capsule of light."
 hero_caption: "A price moved. This is what it looks like to seal the moment it did."
 og_image: /img/fairwhistle-hero.png
+tags: ["Pulse Play", "0xPulsePlay", "FairWhistle", "Solana"]
+entities:
+  - name: "PulsePlay"
+    type: "Organization"
+    alternateName: "0xPulsePlay"
+    sameAs: "https://0xpulseplay.com"
 ---
 
 Tonight's World Cup Final went the distance — Spain beat Argentina 1-0, the winner not arriving until the second period of extra time, in a match that also saw two goals waved off by VAR before it was done. It was exactly the kind of high-tension final, dense with a good half-dozen moments where a market could plausibly move on legitimate news, that we'd been quietly hoping to test **FairWhistle** against for real.
 
-FairWhistle is our entry for the Superteam Earn × TxODDS World Cup hackathon: a **match-integrity surveillance agent**. Leagues, regulators, and tribunals already pay for evidence-grade detection of suspicious betting-market behavior — every fixing scandal starts as a price pattern somebody saw too late. FairWhistle watches a high-frequency multi-book odds feed and turns it into a signed, timestamped, court-shaped alert the instant a pattern fires, instead of a headline written after the fact.
+FairWhistle is our entry for the Superteam Earn × TxODDS World Cup hackathon: a **match-integrity surveillance agent**, and one of six tools shipped tonight under **PulsePlay**, our family of open sports-prediction infrastructure. Leagues, regulators, and tribunals already pay for evidence-grade detection of suspicious betting-market behavior — every fixing scandal starts as a price pattern somebody saw too late. FairWhistle watches a high-frequency multi-book odds feed and turns it into a signed, timestamped, court-shaped alert the instant a pattern fires, instead of a headline written after the fact.
 
 ## What it actually watches for
 

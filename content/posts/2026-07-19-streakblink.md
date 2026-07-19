@@ -9,9 +9,15 @@ hero: /img/streakblink-hero.png
 hero_alt: "A stadium floodlight glowing at the edge of a dark broadcast desk, its beam a calm cyan pulse that snaps into a sharp lime-green heartbeat partway across the frame — a live signal changing state."
 hero_caption: "Devnet to mainnet, live, at halftime — the same kind of pivot the product itself is built to survive."
 og_image: /img/streakblink-hero.png
+tags: ["Pulse Play", "0xPulsePlay", "StreakBlink", "Solana"]
+entities:
+  - name: "PulsePlay"
+    type: "Organization"
+    alternateName: "0xPulsePlay"
+    sameAs: "https://0xpulseplay.com"
 ---
 
-Most prediction products ask you to come to them: download the app, make an account, fund a balance. The World Cup's actual attention surface is nowhere near that — it's the social feed, mid-match, thumb already moving. **StreakBlink is a Solana Blink that puts a next-goal prediction market directly inside that feed**: a fan sees "Next goal — Spain or Argentina?", taps, signs with a wallet they already have, and is back to scrolling in five seconds. It's one of six entries filed tonight for the Superteam Earn × TxODDS World Cup hackathon, in the Consumer and Fan Experiences track, built on TxODDS's live TxLINE scores feed.
+Most prediction products ask you to come to them: download the app, make an account, fund a balance. The World Cup's actual attention surface is nowhere near that — it's the social feed, mid-match, thumb already moving. **StreakBlink is a Solana Blink that puts a next-goal prediction market directly inside that feed**: a fan sees "Next goal — Spain or Argentina?", taps, signs with a wallet they already have, and is back to scrolling in five seconds. It's one of six entries filed tonight for the Superteam Earn × TxODDS World Cup hackathon, in the Consumer and Fan Experiences track, built on TxODDS's live TxLINE scores feed — all part of **PulsePlay**, our family of open sports-prediction tools.
 
 The pitch has a neat trick underneath it: **there is no database.** Every pick is a real signed transaction — a 0-lamport transfer plus an SPL memo (`{ qid, pick, wallet }`) — referencing a single public board account. Because every prediction points at the same account, one `getSignaturesForAddress` call discovers the entire history of picks. Streaks and the leaderboard aren't stored anywhere; they're recomputed live from chain data every time, which means anyone can independently verify them — nobody has to trust the app's word for who's on a streak.
 

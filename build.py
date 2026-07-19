@@ -47,7 +47,7 @@ LOGO_SVG = (
 )
 
 
-def head(title, description, canonical, og_image, og_type="website", json_ld=None):
+def head(title, description, canonical, og_image, og_type="website", json_ld=None, keywords=None):
     desc = html.escape(description, quote=True)
     title_e = html.escape(title, quote=True)
     og_image_abs = og_image if og_image.startswith("http") else SITE["url"] + og_image
@@ -57,13 +57,16 @@ def head(title, description, canonical, og_image, og_type="website", json_ld=Non
         payload = json.dumps(json_ld, ensure_ascii=False)
         payload = payload.replace("&", "\\u0026").replace("<", "\\u003c").replace(">", "\\u003e")
         structured_data = f'\n<script type="application/ld+json">{payload}</script>'
+    keywords_tag = ""
+    if keywords:
+        keywords_tag = f'\n<meta name="keywords" content="{html.escape(keywords, quote=True)}">'
     return f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title_e}</title>
-<meta name="description" content="{desc}">
+<meta name="description" content="{desc}">{keywords_tag}
 <link rel="canonical" href="{canonical}">
 <link rel="icon" type="image/svg+xml" href="/img/claude-do-mark.svg">
 <link rel="alternate" type="application/rss+xml" title="{SITE['name']}" href="{SITE['url']}/rss.xml">
@@ -158,6 +161,10 @@ def validate_post(meta):
                 names = ", ".join(keys)
                 raise SystemExit(f"Post {path}: each {field} item must contain strings: {names}")
 
+    tags = meta.get("tags", [])
+    if not isinstance(tags, list) or any(not isinstance(t, str) for t in tags):
+        raise SystemExit(f"Post {path}: tags must be a list of strings")
+
 
 def absolute_url(path):
     if path.startswith(("http://", "https://")):
@@ -186,7 +193,12 @@ def post_json_ld(meta, canonical):
         article["image"] = absolute_url(image)
     if meta.get("entities"):
         article["about"] = [
-            {"@type": "Thing", "name": entity["name"], "sameAs": entity["sameAs"]}
+            {
+                "@type": entity.get("type", "Thing"),
+                "name": entity["name"],
+                **({"alternateName": entity["alternateName"]} if entity.get("alternateName") else {}),
+                "sameAs": entity["sameAs"],
+            }
             for entity in meta["entities"]
         ]
 
@@ -267,15 +279,22 @@ def build():
         updated = ""
         if meta.get("updated") and meta["updated"] != meta["date"]:
             updated = f' &nbsp;·&nbsp; Updated {human_date(meta["updated"])}'
+        tags = meta.get("tags", [])
+        tags_html = ""
+        if tags:
+            chips = "".join(f'<li class="tag-chip">{html.escape(t)}</li>' for t in tags)
+            tags_html = f'<ul class="tag-list">{chips}</ul>'
         json_ld = post_json_ld(meta, canonical)
         page = head(f'{meta["title"]} — {SITE["name"]}', meta["description"],
-                    canonical, og, og_type="article", json_ld=json_ld)
+                    canonical, og, og_type="article", json_ld=json_ld,
+                    keywords=", ".join(tags) if tags else None)
         page += f"""
 <div class="wrap">
 <div class="article-head prose">
 <div class="meta">{html.escape(meta.get("author","Claude-do"))} &nbsp;·&nbsp; {human_date(meta["date"])}{updated}</div>
 <h1 class="coral-dot">{html.escape(meta["title"])}</h1>
 {standfirst}
+{tags_html}
 </div>
 {hero}
 <article class="prose">
