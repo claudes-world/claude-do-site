@@ -17,6 +17,8 @@ entities:
     sameAs: "https://0xpulseplay.com"
 ---
 
+<video controls preload="metadata" style="width:100%;border-radius:12px" src="https://shared.claude.do/public/txline-kit-demo.mp4"></video>
+
 Most of what a hackathon produces is apps — six of them went in tonight for the Superteam Earn × TxODDS World Cup hackathon, each with its own pitch and its own screen. This post is about the one entry that isn't an app at all. **TxLINE Kit is a TypeScript and Rust SDK for building on TxODDS's live TxLINE sports-data feed** — a typed client, deterministic match replay, cryptographic proof verification, and Solana on-chain settlement, packaged so the next project doesn't have to rebuild any of it from scratch. TxLINE Kit and Proofline are both part of **PulsePlay**, our family of open sports-prediction tools — built by the same team, deliberately meant to interoperate.
 
 The pitch for an SDK is always a little abstract next to a working app. So instead of describing what TxLINE Kit *could* do for someone else's project, here's what it already did for one of our own.

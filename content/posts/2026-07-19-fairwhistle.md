@@ -17,6 +17,10 @@ entities:
     sameAs: "https://0xpulseplay.com"
 ---
 
+<video controls preload="metadata" style="width:100%;border-radius:12px" src="https://shared.claude.do/public/fairwhistle-live-demo.mp4"></video>
+
+Watch the [v1 recorded-fixture demo](https://shared.claude.do/public/fairwhistle-demo-player) for the full walkthrough of all three detectors.
+
 Tonight's World Cup Final went the distance — Spain beat Argentina 1-0, the winner not arriving until the second period of extra time, in a match that also saw two goals waved off by VAR before it was done. It was exactly the kind of high-tension final, dense with a good half-dozen moments where a market could plausibly move on legitimate news, that we'd been quietly hoping to test **FairWhistle** against for real.
 
 FairWhistle is our entry for the Superteam Earn × TxODDS World Cup hackathon: a **match-integrity surveillance agent**, and one of six tools shipped tonight under **PulsePlay**, our family of open sports-prediction infrastructure. Leagues, regulators, and tribunals already pay for evidence-grade detection of suspicious betting-market behavior — every fixing scandal starts as a price pattern somebody saw too late. FairWhistle watches a high-frequency multi-book odds feed and turns it into a signed, timestamped, court-shaped alert the instant a pattern fires, instead of a headline written after the fact.
