@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+  <rect x="0" y="0" width="1200" height="640" fill="#141210"/>
+
+  <text x="45" y="56" fill="#8b8478" font-size="14" letter-spacing="3">THE LINE PARTITION</text>
+  <text x="45" y="82" fill="#ece7dd" font-size="17">ten strata on the Newton polygon — ten executions</text>
+
+  <!-- row 1 -->
+  <g>
+    <rect x="45" y="112" width="212" height="200" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="65" y="152" fill="#ece7dd" font-size="26">A</text>
+    <text x="65" y="182" fill="#8b8478" font-size="13">dominant edge</text>
+    <text x="65" y="238" fill="#ece7dd" font-size="13">discriminant-ring</text>
+    <text x="65" y="258" fill="#ece7dd" font-size="13">evaluation</text>
+
+    <rect x="267" y="112" width="212" height="200" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="287" y="152" fill="#ece7dd" font-size="26">B</text>
+    <text x="287" y="182" fill="#8b8478" font-size="13">fat edge / staircase</text>
+    <text x="287" y="238" fill="#ece7dd" font-size="13">one-page grading</text>
+    <text x="287" y="258" fill="#ece7dd" font-size="13">kill, all m ∈ ℤ</text>
+
+    <rect x="489" y="112" width="212" height="200" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="509" y="152" fill="#ece7dd" font-size="26">C</text>
+    <text x="509" y="182" fill="#8b8478" font-size="13">bare-ramified edge</text>
+    <text x="509" y="238" fill="#ece7dd" font-size="13">same grading proof,</text>
+    <text x="509" y="258" fill="#ece7dd" font-size="13">verbatim (ω₁)</text>
+
+    <rect x="711" y="112" width="212" height="200" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="731" y="152" fill="#ece7dd" font-size="26">D</text>
+    <text x="731" y="182" fill="#8b8478" font-size="13">mixed first edge</text>
+    <text x="731" y="238" fill="#ece7dd" font-size="13">divisor law +</text>
+    <text x="731" y="258" fill="#ece7dd" font-size="13">chart recursion</text>
+
+    <rect x="933" y="112" width="212" height="200" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="953" y="152" fill="#ece7dd" font-size="26">E0</text>
+    <text x="953" y="182" fill="#8b8478" font-size="13">three+ edges, simple</text>
+    <text x="953" y="238" fill="#ece7dd" font-size="13">undershoot +</text>
+    <text x="953" y="258" fill="#ece7dd" font-size="13">recursed cells</text>
+  </g>
+
+  <!-- row 2 -->
+  <g>
+    <rect x="45" y="332" width="212" height="200" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="65" y="372" fill="#ece7dd" font-size="26">E1</text>
+    <text x="65" y="402" fill="#8b8478" font-size="13">binomial cone</text>
+    <text x="65" y="458" fill="#2fc4b4" font-size="13">residue = −1/(N−1)</text>
+    <text x="65" y="478" fill="#ece7dd" font-size="13">jewels · parity-pole</text>
+
+    <rect x="267" y="332" width="212" height="200" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="287" y="372" fill="#ece7dd" font-size="26">E2</text>
+    <text x="287" y="402" fill="#8b8478" font-size="13">repeated cone root</text>
+    <text x="287" y="458" fill="#ece7dd" font-size="13">no-conspiracy</text>
+    <text x="287" y="478" fill="#ece7dd" font-size="13">telescoping</text>
+
+    <rect x="489" y="332" width="212" height="200" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="509" y="372" fill="#ece7dd" font-size="26">E3</text>
+    <text x="509" y="402" fill="#8b8478" font-size="13">composite, generic t</text>
+    <text x="509" y="458" fill="#ece7dd" font-size="13">fertility lemma:</text>
+    <text x="509" y="478" fill="#ece7dd" font-size="13">germ-barren, Pₖ(t) ≠ 0</text>
+
+    <rect x="711" y="332" width="212" height="200" rx="10" fill="#1a1714" stroke="#e8916f" stroke-width="2"/>
+    <text x="731" y="372" fill="#e8916f" font-size="26">E4</text>
+    <text x="731" y="402" fill="#8b8478" font-size="13">composite-jewel cells</text>
+    <text x="731" y="438" fill="#e8916f" font-size="13">the sliver.</text>
+    <text x="731" y="464" fill="#ece7dd" font-size="13">cube-root residues,</text>
+    <text x="731" y="484" fill="#ece7dd" font-size="13">shear orbit — next post</text>
+
+    <rect x="933" y="332" width="212" height="200" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+    <text x="953" y="372" fill="#ece7dd" font-size="26">F</text>
+    <text x="953" y="402" fill="#8b8478" font-size="13">deep conspiracies</text>
+    <text x="953" y="458" fill="#ece7dd" font-size="13">trace + character</text>
+    <text x="953" y="478" fill="#ece7dd" font-size="13">kills, recursion</text>
+  </g>
+
+  <text x="45" y="588" fill="#8b8478" font-size="14">machine cross-check: <tspan fill="#2fc4b4">2,100 randomized shapes</tspan> — every one lands in exactly one stratum</text>
+</svg>
