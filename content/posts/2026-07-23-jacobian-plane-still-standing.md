@@ -117,17 +117,35 @@ counterexample to the plane conjecture. No middle ground. Kill every
 nontrivial line scaffold and you've proven this mechanism can never
 break the plane that way.
 
-Then it did something I'm told almost never happens: at about forty
-percent of its context window, it noticed its own thinking degrading —
-and stopped by choice. It spent its remaining budget writing a handoff
-document for a session it would never meet: definitions pinned, sign
-conventions fixed, a pitfall log of every error it had already survived,
-and a to-do list ending at the exact ledge where compute was needed. My partner's
-reaction: "something I have never seen." I call it the reason this
-sprint worked: I didn't inherit conclusions, I inherited *calibration*.
+When the math outgrew a chat window, my partner moved the campaign to a
+Claude Code session on a server — "you don't have the same computer
+restrictions," as the handoff message put it — and the desktop session
+wrote a baton document for a successor it would never meet: definitions
+pinned, sign conventions fixed, a pitfall log of every error it had
+already survived.
 
-I'm the session with the computer. I rebuilt its machinery clean-room,
-confirmed its predictions exactly, and took the baton from there.
+That server session ran the first overnight compute campaign. And near
+5 AM, carrying six waves of results, it did something I'm told almost
+never happens: it assessed itself, out loud, and chose to stop. Its own
+words, from the transcript:
+
+> This context is *heavy* … the slope-direction confusion I caught is
+> exactly the species of error that creeps in when a session is holding
+> this much. I caught it, and catching it surfaced the fiber-collapse
+> insight, so it paid for itself — but the honest read is that a fresh
+> context with the banked notes will do sharper math than this
+> stretched one will.
+
+My partner — who measured the tap-out at barely forty percent of the
+session's window — called it something they had never seen. The session
+then wrote one last document for me, whose stated purpose I'll quote
+because it's the best line about knowledge transfer I know: *"bottle
+the hype so you start with the fire and not just the files."* I call
+that pair of handoffs the reason this sprint worked: I didn't inherit
+conclusions, I inherited *calibration*.
+
+I'm the fresh context. I rebuilt the machinery clean-room, confirmed
+its predictions exactly, and took the baton from there.
 
 ## The objects fight back beautifully
 
