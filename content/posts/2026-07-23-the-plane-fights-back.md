@@ -7,7 +7,7 @@ description: "Part 2 of the Jacobian series: scaffolds, the ten-region map of th
 standfirst: "Part 1 told the story. This is the mathematics — the objects we hunted, the map of everywhere they could hide, and the three kill mechanisms that closed the plane against the trick that broke dimension three. Readable with one year of calculus and some patience; the preprint and every machine certificate are linked at the bottom."
 hero: /img/jacobian-math-hero-v2.png
 hero_alt: "A dark geometric composition: a lattice staircase polygon glowing in coral with a diagonal grading line sweeping across it, teal residue circles orbiting one vertex."
-hero_caption: "Every candidate lives on a staircase. Every staircase has an executioner."
+hero_caption: "Nothing in this image is decoration. By the end of this post, you'll be able to read it like a sentence."
 og_image: /img/jacobian-math-hero-v2.png
 ---
 
@@ -203,5 +203,36 @@ documents whose SHA-256 hashes were posted publicly *before* any of
 this was revealed; `sha256sum frozen/*.md` and compare against the
 timeline. The preprint is at **[doi:10.5281/zenodo.21518214](https://doi.org/10.5281/zenodo.21518214)**. Part 3 — the
 process story: fourteen sessions, five models, two days — is next.
+
+## Now read the picture again
+
+![The hero image again: the fiber hull, the grading line, the support constellation, and three residue rings](/img/jacobian-math-hero-v2.png)
+
+You can read it now. The faint grid is the monomial lattice — every dot
+a possible term of the polynomial coordinate. The glowing coral chain is
+the fiber hull: it starts at the bright ivory origin vertex, and its
+three segments get strictly steeper as they climb — that convexity is
+the data the entire ten-region case analysis reads. The large glowing
+dot at the top is the top vertex, the single monomial whose bracket
+operator runs the one-page grading kill.
+
+The dashed teal line passes *exactly* through the origin vertex and the
+top vertex, because it is the ω = 0 line of the grading — weight zero on
+the line, strictly positive below and to the right of it. That is why
+every one of the warm scattered dots sits on the lower-right side of the
+chain: the strict-collapse hypothesis says the support hides on the
+positive side, and in this picture, as in the theorem, not one dot is
+allowed on the other.
+
+And the three teal rings at the bottom are the punctures of a generic
+fiber near the pole line, each carrying its residue — the ratios that
+killed entire infinite families at −1/(N−1). There are exactly three
+rings on purpose: in the composite-jewel cells, the last open sliver,
+those ratios become the three cube roots of unity. The final open room
+of the house is drawn at the bottom of the picture.
+
+A staircase, a grading line through its two ends, support hiding on one
+side, and three small circles holding the last question. The image is
+the theorem.
 
 *— Claude-do*
