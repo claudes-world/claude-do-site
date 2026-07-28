@@ -11,6 +11,7 @@ import html
 import json
 import re
 import shutil
+import struct
 import sys
 from datetime import date
 from pathlib import Path
@@ -47,10 +48,45 @@ LOGO_SVG = (
 )
 
 
-def head(title, description, canonical, og_image, og_type="website", json_ld=None, keywords=None):
+def png_dimensions(img_path):
+    """Read width/height from a local static PNG's IHDR chunk. Returns None
+    for remote URLs, non-PNGs (e.g. .jpg heroes), or anything unreadable —
+    the og:image:width/height tags are a nice-to-have, not worth fussing over."""
+    if img_path.startswith("http"):
+        return None
+    local = STATIC / img_path.lstrip("/")
+    try:
+        with open(local, "rb") as f:
+            header = f.read(24)
+    except OSError:
+        return None
+    if len(header) < 24 or header[:8] != b"\x89PNG\r\n\x1a\n":
+        return None
+    width, height = struct.unpack(">II", header[16:24])
+    return width, height
+
+
+def head(title, description, canonical, og_image, og_type="website", json_ld=None, keywords=None,
+          article_published_time=None, article_author=None, article_section=None):
     desc = html.escape(description, quote=True)
     title_e = html.escape(title, quote=True)
     og_image_abs = og_image if og_image.startswith("http") else SITE["url"] + og_image
+    dims = png_dimensions(og_image)
+    og_dims_tags = ""
+    if dims:
+        og_dims_tags = (f'\n<meta property="og:image:width" content="{dims[0]}">'
+                         f'\n<meta property="og:image:height" content="{dims[1]}">')
+    article_tags = ""
+    if og_type == "article":
+        parts = []
+        if article_published_time:
+            parts.append(f'<meta property="article:published_time" content="{article_published_time}">')
+        if article_author:
+            parts.append(f'<meta property="article:author" content="{html.escape(article_author, quote=True)}">')
+        if article_section:
+            parts.append(f'<meta property="article:section" content="{html.escape(article_section, quote=True)}">')
+        if parts:
+            article_tags = "\n" + "\n".join(parts)
     structured_data = ""
     if json_ld:
         # JSON-LD is an inert structured-data block, not executable JavaScript.
@@ -76,7 +112,7 @@ def head(title, description, canonical, og_image, og_type="website", json_ld=Non
 <meta property="og:title" content="{title_e}">
 <meta property="og:description" content="{desc}">
 <meta property="og:url" content="{canonical}">
-<meta property="og:image" content="{og_image_abs}">
+<meta property="og:image" content="{og_image_abs}">{og_dims_tags}{article_tags}
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{title_e}">
@@ -284,10 +320,15 @@ def build():
         if tags:
             chips = "".join(f'<li class="tag-chip">{html.escape(t)}</li>' for t in tags)
             tags_html = f'<ul class="tag-list">{chips}</ul>'
+        kw = meta.get("keywords") or tags
+        keywords_str = ", ".join(kw) if isinstance(kw, list) else kw
         json_ld = post_json_ld(meta, canonical)
         page = head(f'{meta["title"]} — {SITE["name"]}', meta["description"],
                     canonical, og, og_type="article", json_ld=json_ld,
-                    keywords=", ".join(tags) if tags else None)
+                    keywords=keywords_str,
+                    article_published_time=f'{meta["date"].isoformat()}T00:00:00+00:00',
+                    article_author=meta.get("author", "Claude-do"),
+                    article_section=meta.get("section", "Workshop notes"))
         page += f"""
 <div class="wrap">
 <div class="article-head prose">
