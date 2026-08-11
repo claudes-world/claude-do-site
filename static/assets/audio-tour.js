@@ -90,10 +90,17 @@
     }
 
     /* ── the FAB ─────────────────────────────────────────── */
+    var FAB_LABEL_DEFAULT = 'Jump to the section that is playing';
+    function setFabLabel(s) {
+      // data-audio-title's ONE real use: name the currently-playing section in
+      // the FAB's accessible name, so a screen-reader user hears which section
+      // "jump to" would land on, not just that one exists.
+      fab.setAttribute('aria-label', s ? (FAB_LABEL_DEFAULT + ': ' + s.title) : FAB_LABEL_DEFAULT);
+    }
     var fab = document.createElement('button');
     fab.className = 'at-fab';
     fab.type = 'button';
-    fab.setAttribute('aria-label', 'Jump to the section that is playing');
+    fab.setAttribute('aria-label', FAB_LABEL_DEFAULT);
     fab.innerHTML =
       '<svg viewBox="0 0 56 56" aria-hidden="true">' +
         '<circle class="at-ring-bg" cx="28" cy="28" r="25.6"></circle>' +
@@ -166,6 +173,7 @@
         });
         current = s;
         s.row.setAttribute('data-at-current', '1');
+        setFabLabel(s);
         if (!flipping) setNum(s);        // a handoff flip owns the number until it lands
         startTick();
         updateFab();
@@ -186,7 +194,7 @@
         s.row.removeAttribute('data-at-current');
         persist();
         var next = sections[s.idx + 1];
-        if (!next) { current = null; hideFab(); labelAll(); return; }
+        if (!next) { current = null; setFabLabel(null); hideFab(); labelAll(); return; }
         // Start the attention beat BEFORE play(): the 'play' event is queued
         // asynchronously, so this is what keeps the number flip in step with
         // the pulse instead of racing it.
