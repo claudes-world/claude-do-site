@@ -361,6 +361,27 @@ article.prose td {
 article.prose td:last-child { color: var(--ink); }
 article.prose tr:last-child td { border-bottom: none; }
 
+/* ── listen-along players ──────────────────────────────────────
+   The card the audio-tour component morphs into its floating core. The
+   component styles its OWN `.at-*` internals and only ever paints on top of
+   this card (progress wash, done tick, shed opacity) — the card itself is the
+   host page's, and the component's contract asks for exactly this much:
+   `display: flex; align-items: center` and a `border-radius`, so the `.at-slot`
+   it inserts as the first child lands in line with the label. Ported verbatim
+   from the MCP/AX posts' own stylesheet. */
+.listen {
+  display: flex; align-items: center; gap: .85rem; flex-wrap: wrap;
+  background: var(--paper-2); border: 1px solid var(--rule-soft);
+  border-left: 3px solid var(--teal);
+  border-radius: 8px; padding: .7rem .9rem; margin: 0 0 1.6rem;
+}
+.listen .label {
+  font-family: var(--mono); font-size: .68rem; letter-spacing: .13em;
+  text-transform: uppercase; color: var(--teal-deep); white-space: nowrap;
+}
+.listen audio { width: 100%; max-width: 26rem; height: 34px; flex: 1 1 16rem; }
+.listen audio::-webkit-media-controls-panel { background: var(--paper-3); }
+
 /* ── verify tags ───────────────────────────────────────────── */
 /* An inline claim-provenance marker: "this specific clause is unconfirmed".
    Ported verbatim from the MCP/AX posts' own stylesheet (WORLD-552 template). */
@@ -450,6 +471,12 @@ figure.tbl > figcaption > strong {
     -webkit-overflow-scrolling: touch;
   }
   figure.fig .frame svg { min-width: 620px; }
+  /* say so, since the pan is the only way to read a wide diagram on a phone.
+     Capitalized because it follows the caption's own full stop. */
+  figure.fig figcaption::after {
+    content: " Swipe the figure sideways to read it.";
+    color: var(--muted);
+  }
 }
 
 /* ── full-bleed on a phone ─────────────────────────────────────
