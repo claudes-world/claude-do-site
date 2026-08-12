@@ -1,13 +1,16 @@
 /* ─────────────────────────────────────────────────────────────
    audio-tour.css — listen-along tour: chained section players,
-   directional FAB with progress ring, merge-on-tap, section flash.
+   a progress ring that lives IN the player card and morphs into a
+   floating core when the card scrolls away, merge-on-scroll-back,
+   section flash.
    Self-contained. Inherits brand custom properties when present
    (--teal, --coral, --ink, --paper-2, --card, --rule…), with
    fallbacks so it also stands alone.
    ───────────────────────────────────────────────────────────── */
 
-/* Tokens live on :root as well as .at-tour — the FAB is a <body> child, so
-   scoping them to the tour root alone would make every var() invalid there. */
+/* Tokens live on :root as well as .at-tour — the morph shell is a <body>
+   child, so scoping them to the tour root alone would make every var()
+   invalid there. */
 :root, .at-tour {
   --at-accent:      var(--teal,      #2fc4b4);
   --at-accent-deep: var(--teal-deep, #45cabb);
@@ -18,6 +21,10 @@
   --at-text:        var(--ink,       #ece7dd);
   --at-text-soft:   var(--ink-soft,  #b8b1a4);
   --at-ui: var(--mono, ui-monospace, "SFMono-Regular", Menlo, monospace);
+  --at-core-size: 40px;      /* ring diameter inside the card */
+  --at-fab-size:  56px;      /* ring diameter as a floating core   */
+  --at-wash: linear-gradient(180deg,
+             rgba(47,196,180,.20), rgba(232,145,111,.11) 62%, transparent 100%);
 }
 
 /* ── whole-post / resume control ───────────────────────────── */
@@ -26,7 +33,7 @@
   margin: 0 0 1.7rem;
 }
 .at-all {
-  display: inline-flex; align-items: center; gap: .55rem;
+  display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
   font-family: var(--at-ui); font-size: .72rem; letter-spacing: .11em;
   text-transform: uppercase; color: var(--at-accent-deep);
   background: var(--at-surface); border: 1px solid var(--at-line);
@@ -51,22 +58,188 @@
 }
 
 /* ── per-section player row ────────────────────────────────── */
-.at-tour .listen { position: relative; scroll-margin-top: 20vh; }
+.at-tour .listen { position: relative; scroll-margin-top: 20vh; isolation: isolate; }
+.at-tour .listen > * { position: relative; z-index: 1; }
 
-.at-tour .listen[data-at-done="1"] {
-  border-left-color: var(--at-accent-deep);
+/* the card IS the progress indicator: a soft wash fills left→right as the
+   section plays, in the same gradient language as the section flash. Never
+   opaque — the label and the native controls stay fully readable on top. */
+.at-tour .listen::before {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  border-radius: inherit; pointer-events: none;
+  background: var(--at-wash);
+  clip-path: inset(0 calc(100% - var(--at-prog, 0) * 100%) 0 0);
+  transition: opacity .3s ease;
 }
+/* the fill front — a hairline that reads as a playhead */
+.at-tour .listen::after {
+  content: ""; position: absolute; z-index: 0; top: 0; bottom: 0; width: 1px;
+  left: calc(var(--at-prog, 0) * 100%); pointer-events: none;
+  background: linear-gradient(180deg, var(--at-accent), transparent 88%);
+  opacity: var(--at-front, 0); transition: opacity .3s ease;
+}
+/* the playing card is consumed by the morph shell: while the shell is growing
+   out of it the row itself fades, so what is on screen is one object rather
+   than a silhouette plus the sliver it left behind. 0 whenever nothing floats. */
+.at-tour .listen[data-at-current="1"] { border-left-color: var(--at-warm); }
+.at-tour .listen { opacity: calc(1 - var(--at-shed, 0)); }
+.at-tour .listen[data-at-current="1"]::after { --at-front: .75; }
+.at-tour .listen[data-at-done="1"] { border-left-color: var(--at-accent-deep); }
+.at-tour .listen[data-at-done="1"]:not([data-at-current="1"])::before { opacity: .45; }
 .at-tour .listen[data-at-done="1"] .label::after {
   content: " ✓"; color: var(--at-accent); letter-spacing: 0;
 }
-.at-tour .listen[data-at-current="1"] { border-left-color: var(--at-warm); }
 
-/* absorb pop — the player "catches" the FAB */
+/* absorb pop — the player "catches" the core as they become one again */
 .at-absorb { animation: at-absorb .42s cubic-bezier(.22,.9,.24,1); }
 @keyframes at-absorb {
   0%   { transform: scale(1);    box-shadow: 0 0 0 0 rgba(47,196,180,0); }
   38%  { transform: scale(1.035); box-shadow: 0 0 0 7px rgba(47,196,180,.16); }
   100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(47,196,180,0); }
+}
+
+/* ── THE CORE: ring + §number. One per card; the playing card's own core
+      is the element that travels. Same node in both states. ───────── */
+.at-slot {
+  position: relative; flex: 0 0 auto;
+  width: var(--at-core-size); height: var(--at-core-size);
+}
+.at-core {
+  position: absolute; left: 0; top: 0;
+  width: var(--at-fab-size); height: var(--at-fab-size);
+  transform-origin: 0 0; pointer-events: none;
+  /* card state: the core scaled down to the slot. No transition — the
+     morph writes transform per frame, and a transition would fight it. */
+  transform: scale(.7143);
+}
+/* In the shell the core is centred by the box model, not by measurement: its
+   own centre is both its anchor point and its transform origin, so
+   translate(-50%,-50%) is exactly concentric with the shell at ANY scale, in
+   any engine. The morph only adds a centre-to-centre offset that decays to 0. */
+.at-morph .at-core {
+  left: 50%; top: 50%; transform-origin: 50% 50%;
+  transform: translate(-50%, -50%);
+}
+.at-core svg {
+  position: absolute; inset: 0;
+  width: var(--at-fab-size); height: var(--at-fab-size);
+  transform: rotate(-90deg); overflow: visible;
+}
+.at-core circle { fill: none; stroke-width: 3; stroke-linecap: round; }
+.at-core .at-ring-bg { stroke: rgba(255,255,255,.16); }
+.at-core .at-ring-fg { stroke: var(--at-accent); transition: stroke-dashoffset .18s linear; }
+.at-slot .at-core .at-ring-bg { stroke: rgba(255,255,255,.13); }
+.at-core .at-num {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-family: var(--at-ui); font-size: 1.02rem; font-weight: 700;
+  color: var(--at-text-soft); letter-spacing: .01em;
+  transition: color .3s ease;
+}
+.at-tour .listen[data-at-current="1"] .at-num,
+.at-morph .at-num { color: var(--at-text); }
+.at-core .at-dir {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  font-size: .62rem; color: var(--at-accent); line-height: 1;
+  opacity: 0; transition: opacity .22s ease;
+}
+.at-morph .at-core .at-dir { opacity: .9; }
+.at-morph[data-pos="below"] .at-core .at-dir { bottom: 7px; }
+.at-morph[data-pos="above"] .at-core .at-dir { top: 7px; }
+
+/* ── THE MORPH SHELL: the card's own geometry, compressed. ────────
+      Width/height/border-radius are interpolated card→circle; position is
+      a transform. It is one object with the card, not a second badge. */
+.at-morph {
+  position: fixed; left: 0; top: 0; z-index: 60;
+  width: var(--at-fab-size); height: var(--at-fab-size);
+  padding: 0; margin: 0; border: 0; background: none;
+  border-radius: 8px; cursor: pointer;
+  transform: translate3d(-200vw, 0, 0); transform-origin: 50% 50%;
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s ease;
+  will-change: transform, width, height;
+  -webkit-tap-highlight-color: transparent;
+}
+.at-morph.at-show { opacity: 1; }
+.at-morph.at-live { pointer-events: auto; }
+.at-morph:focus-visible { outline: 2px solid var(--at-accent); outline-offset: 3px; }
+
+/* shadow layers sit OUTSIDE the clip so their spread is never cropped:
+   the card's shadow crossfades into the floating core's glow. */
+.at-morph-shadow, .at-morph-glow {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+}
+.at-morph-shadow { box-shadow: 0 8px 26px rgba(0,0,0,.42), 0 0 0 1px var(--at-line); }
+.at-morph-glow {
+  opacity: 0;
+  box-shadow: 0 10px 30px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.09),
+              0 0 22px -6px var(--at-accent);
+}
+/* everything that sheds during the compression is clipped by the shrinking
+   silhouette, so the card visibly loses its contents down to the ring. */
+.at-morph-clip {
+  position: absolute; inset: 0; border-radius: inherit;
+  overflow: hidden; pointer-events: none;
+}
+.at-morph-face { position: absolute; inset: 0; background: var(--at-surface); }
+.at-morph-face::after {
+  content: ""; position: absolute; inset: 0; opacity: var(--at-face2, 0);
+  background: var(--at-surface-2);
+}
+.at-morph-wash {
+  position: absolute; inset: 0; background: var(--at-wash);
+  clip-path: inset(0 calc(100% - var(--at-prog, 0) * 100%) 0 0);
+}
+.at-morph-ghost { position: absolute; inset: 0; }
+.at-morph-ghost .at-ghost-label {
+  position: absolute; white-space: nowrap;
+  font-family: var(--at-ui); font-size: .68rem; letter-spacing: .13em;
+  text-transform: uppercase; color: var(--at-accent-deep);
+  display: flex; align-items: center;
+}
+.at-morph-ghost .at-ghost-ctl {
+  position: absolute; border-radius: 999px;
+  background: var(--at-surface-2);
+  box-shadow: inset 0 0 0 1px var(--at-line);
+}
+.at-morph-ghost .at-ghost-ctl::before {
+  content: ""; position: absolute; left: 10px; top: 50%;
+  width: 0; height: 0; margin-top: -4px; border-style: solid;
+  border-width: 4px 0 4px 7px;
+  border-color: transparent transparent transparent var(--at-text-soft);
+}
+
+/* handoff attention: the shell holds its place, pulses, and the arriving
+   core's number flips in — the digits swap while the glyph is edge-on */
+.at-morph.at-handoff .at-morph-glow { animation: at-pulse .78s cubic-bezier(.2,.85,.3,1); }
+.at-core.at-enter .at-num { animation: at-flip .5s cubic-bezier(.3,.8,.2,1); }
+@keyframes at-flip {
+  0%   { transform: rotateX(0deg);   opacity: 1; }
+  49%  { transform: rotateX(90deg);  opacity: .15; }
+  50%  { transform: rotateX(-90deg); opacity: .15; }
+  100% { transform: rotateX(0deg);   opacity: 1; }
+}
+@keyframes at-pulse {
+  0%   { box-shadow: 0 10px 30px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.09), 0 0 0 0 rgba(47,196,180,.55); }
+  55%  { box-shadow: 0 10px 30px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.09), 0 0 0 14px rgba(47,196,180,0); }
+  100% { box-shadow: 0 10px 30px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.09), 0 0 0 0 rgba(47,196,180,0); }
+}
+
+/* the resting place of the floating core. Measured, never drawn — the shell
+   reads its geometry so the media queries below stay the single source of
+   truth for where the core lands and how big it is. */
+.at-anchor {
+  position: fixed; left: 1rem; z-index: 0;
+  width: var(--at-fab-size); height: var(--at-fab-size);
+  visibility: hidden; pointer-events: none;
+  /* the gap between the resting core and whichever band edge it hangs from.
+     CSS owns the spacing; the script owns which edge — see --at-fab-y. */
+  --at-fab-gap: 14px;
+  /* ONE vertical coordinate space. `bottom` would resolve against the layout
+     viewport while the shell's transform resolves against the visible band, and
+     in a webview with an expanded unsafe region those are different boxes — the
+     script writes the resting Y in band coordinates for both sides instead. */
+  top: var(--at-fab-y, 4.6rem); bottom: auto;
 }
 
 /* ── section flash: bind the audio to the words it narrates ── */
@@ -88,81 +261,30 @@
 .at-section > p, .at-section > ul, .at-section > ol,
 .at-section > h2, .at-section > h3 { transition: color .6s ease; }
 
-/* ── the directional FAB ───────────────────────────────────── */
-.at-fab {
-  position: fixed; left: 1rem; z-index: 60;
-  width: 56px; height: 56px; padding: 0; margin: 0;
-  border: none; border-radius: 50%; cursor: pointer;
-  background: var(--at-surface-2);
-  box-shadow: 0 10px 30px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.09),
-              0 0 22px -6px var(--at-accent);
-  display: grid; place-items: center;
-  opacity: 0; transform: scale(.7) translateY(6px);
-  transition: opacity .24s ease, transform .3s cubic-bezier(.2,.9,.24,1);
-  pointer-events: none;
-}
-.at-fab[data-pos="below"] { bottom: 1.15rem; top: auto; }
-.at-fab[data-pos="above"] { top: var(--at-fab-top, 4.6rem); bottom: auto; }
-.at-fab.at-show { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
-.at-fab:focus-visible { outline: 2px solid var(--at-accent); outline-offset: 3px; }
-
-.at-fab svg { position: absolute; inset: 0; width: 56px; height: 56px; transform: rotate(-90deg); }
-.at-fab .at-ring-bg   { stroke: rgba(255,255,255,.16); }
-.at-fab .at-ring-fg   { stroke: var(--at-accent); transition: stroke-dashoffset .18s linear; }
-.at-fab circle { fill: none; stroke-width: 3; stroke-linecap: round; }
-
-.at-fab .at-num {
-  position: relative; font-family: var(--at-ui); font-size: .95rem;
-  font-weight: 700; color: var(--at-text); letter-spacing: .01em;
-  text-shadow: 0 1px 0 rgba(0,0,0,.35);
-}
-.at-fab .at-dir {
-  position: absolute; left: 50%; transform: translateX(-50%);
-  font-size: .62rem; color: var(--at-accent); line-height: 1;
-}
-.at-fab[data-pos="below"] .at-dir { bottom: 7px; }
-.at-fab[data-pos="above"] .at-dir { top: 7px; }
-
-/* handoff attention: pulse + number flip */
-.at-fab.at-handoff { animation: at-pulse .78s cubic-bezier(.2,.85,.3,1); }
-.at-fab.at-handoff .at-num { animation: at-flip .5s cubic-bezier(.3,.8,.2,1); }
-@keyframes at-pulse {
-  0%   { box-shadow: 0 10px 30px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.09), 0 0 0 0 rgba(47,196,180,.55); }
-  55%  { box-shadow: 0 10px 30px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.09), 0 0 0 14px rgba(47,196,180,0); }
-  100% { box-shadow: 0 10px 30px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.09), 0 0 0 0 rgba(47,196,180,0); }
-}
-@keyframes at-flip {
-  0%   { transform: rotateX(0deg);   opacity: 1; }
-  49%  { transform: rotateX(90deg);  opacity: .15; }
-  50%  { transform: rotateX(-90deg); opacity: .15; }
-  100% { transform: rotateX(0deg);   opacity: 1; }
-}
-
-/* merge: the FAB travels the last inch into the player and dissolves */
-.at-fab.at-merging {
-  transition: transform .26s cubic-bezier(.4,0,.7,.2), opacity .26s ease-in;
-  transform: translate(var(--at-mx, 0px), var(--at-my, 0px)) scale(.28);
-  opacity: 0; pointer-events: none;
-}
-
 /* ── phone ─────────────────────────────────────────────────── */
 @media (max-width: 46rem) {
-  .at-fab { width: 50px; height: 50px; left: .7rem; }
-  .at-fab svg { width: 50px; height: 50px; }
-  .at-fab .at-num { font-size: .86rem; }
-  .at-fab[data-pos="below"] { bottom: .8rem; }
+  :root, .at-tour { --at-fab-size: 50px; --at-core-size: 36px; }
+  .at-core { transform: scale(.72); }
+  .at-core .at-num { font-size: .95rem; }
+  .at-anchor { left: .7rem; --at-fab-gap: 12px; }
   .at-section::before { inset: -.5rem -.7rem; }
 }
 
 /* ── light theme nudges ────────────────────────────────────── */
 @media (prefers-color-scheme: light) {
-  .at-fab {
-    background: var(--warm-white, #fff);
+  :root, .at-tour {
+    --at-wash: linear-gradient(180deg,
+               rgba(16,169,155,.17), rgba(217,119,87,.10) 62%, transparent 100%);
+  }
+  .at-core .at-ring-bg, .at-slot .at-core .at-ring-bg { stroke: rgba(33,30,26,.14); }
+  /* the card face stays the card's surface; only the floating state's face
+     lifts to the warm white the FAB always used */
+  .at-morph-face::after { background: var(--warm-white, #fff); }
+  .at-morph-shadow { box-shadow: 0 8px 22px rgba(33,30,26,.16), 0 0 0 1px rgba(33,30,26,.10); }
+  .at-morph-glow {
     box-shadow: 0 10px 26px rgba(33,30,26,.20), 0 0 0 1px rgba(33,30,26,.12),
                 0 0 20px -8px var(--at-accent);
   }
-  .at-fab .at-ring-bg { stroke: rgba(33,30,26,.14); }
-  .at-fab .at-num { text-shadow: none; }
   .at-section::before {
     background: linear-gradient(180deg,
                 rgba(16,169,155,.15), rgba(217,119,87,.10) 62%, transparent 100%);
@@ -175,15 +297,17 @@
   }
 }
 
-/* ── reduced motion: opacity only, no travel, no pop ───────── */
+/* ── reduced motion: no positional animation at all. The shell is a plain
+      circle that fades in and out at the anchor; the JS clamps the morph
+      to its two end states and jumps the scroll instead of travelling. ── */
 @media (prefers-reduced-motion: reduce) {
-  .at-fab,
-  .at-fab.at-merging { transition: opacity .12s linear; transform: none; }
-  .at-fab.at-show { transform: none; }
-  .at-fab.at-merging { opacity: 0; }
-  .at-fab.at-handoff { animation: none; }
-  .at-fab.at-handoff .at-num { animation: none; }
-  .at-fab .at-ring-fg { transition: none; }
+  .at-morph { transition: opacity .12s linear; }
+  .at-morph-glow { animation: none !important; }
+  .at-morph.at-handoff .at-morph-glow { animation: none; }
+  .at-core.at-enter .at-num { animation: none; }
+  .at-core .at-ring-fg { transition: none; }
+  .at-core .at-num, .at-core .at-dir { transition: none; }
+  .at-tour .listen::before, .at-tour .listen::after { transition: none; }
   .at-absorb { animation: none; }
   .at-section::before { transition: opacity .12s linear; }
   .at-section.at-flash > p, .at-section.at-flash > ul, .at-section.at-flash > ol,
