@@ -92,6 +92,8 @@ Green opened as sealed. Amber died — and each amber chip names the law its dea
 
 **The signs are a Dirichlet character.** The recursion's orbit polynomials have constant terms whose signs match the quadratic character mod 12 at every depth we've computed — exact integer arithmetic, minimal polynomials up to degree fifty-one. Here is the entire measured record; try to find a miss:
 
+<figure class="tbl" markdown="1">
+
 | depth k | curve count | sign of J<sub>k</sub>(0), measured | χ₁₂(k), demanded by eta |
 |---:|---:|:---:|:---:|
 | 5 | 1 | − | − |
@@ -105,6 +107,10 @@ Green opened as sealed. Amber died — and each amber chip names the law its dea
 | 29 | 35 | − | − |
 | 35 | 51 | + | + |
 
+<figcaption><b>Ten depths, no misses</b> — every sign the recursion produced, next to the sign eta's character mod 12 demands. Exact integer arithmetic, minimal polynomials up to degree fifty-one.</figcaption>
+
+</figure>
+
 **The gates run a mass formula.** At each depth there's a special prime, p = 2k+3, where the whole family collapses onto a handful of complex-multiplication points — the royalty of elliptic curves. Six gates of seemingly chaotic multiplicities resolved, at two a.m. with a pencil, into one law: every multiplicity is (k+1) divided by the number of automorphisms of the CM point. A Deuring-style mass formula. Eight gates, sixteen entries, zero misses:
 
 <img src="/img/gate-mass-diagonal.png" alt="Scatter plot: measured collapse multiplicity versus predicted (p−1)/2w for all sixteen CM points across eight prime gates — every point sits exactly on the diagonal, colored by automorphism count." style="width:100%;border-radius:12px;" loading="lazy" />
@@ -113,6 +119,8 @@ Green opened as sealed. Amber died — and each amber chip names the law its dea
 
 **The weight walked out of hiding.** Jacobi's identity for eta cubed demands that certain depths carry a weight of 2m+1. We hunted that weight through three failed attempts, and it finally surfaced in the real geometry — the number of positive-j real curves at those depths is exactly m, each carries two real points, the anchor adds one:
 
+<figure class="tbl" markdown="1">
+
 | m | depth k | exponent 3T<sub>m</sub> | positive-j real curves | negative-j | weight 2m+1 | sign, measured vs (−1)^m |
 |---:|---:|---:|---:|---:|---:|:---:|
 | 1 | 9 | 3 | 1 | 0 | 3 | − ✓ |
@@ -120,6 +128,10 @@ Green opened as sealed. Amber died — and each amber chip names the law its dea
 | 3 | 21 | 18 | 3 | 1 | 7 | − ✓ |
 | 4 | 27 | 30 | 4 | 2 | 9 | + ✓ |
 | 5 | 33 | 45 | 5 | 2 | 11 | − ✓ |
+
+<figcaption><b>Where Jacobi's weight was hiding</b> — the real-curve census at the eta-cubed depths k = 3(2m+1). Each positive-j curve carries two real points and the anchor adds one, which is exactly the weight 2m+1 the identity demands; the measured sign matches (−1)<sup>m</sup> on every row.</figcaption>
+
+</figure>
 
 <small>*at m=2 the table shows the count after the packet convention; the m=5 row was sealed in full — five positive, two negative, seven real, sign minus, weight eleven — before its three-hour computation ran, and every line opened correct.</small>
 
