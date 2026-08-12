@@ -1,0 +1,193 @@
+/* ─────────────────────────────────────────────────────────────
+   audio-tour.css — listen-along tour: chained section players,
+   directional FAB with progress ring, merge-on-tap, section flash.
+   Self-contained. Inherits brand custom properties when present
+   (--teal, --coral, --ink, --paper-2, --card, --rule…), with
+   fallbacks so it also stands alone.
+   ───────────────────────────────────────────────────────────── */
+
+/* Tokens live on :root as well as .at-tour — the FAB is a <body> child, so
+   scoping them to the tour root alone would make every var() invalid there. */
+:root, .at-tour {
+  --at-accent:      var(--teal,      #2fc4b4);
+  --at-accent-deep: var(--teal-deep, #45cabb);
+  --at-warm:        var(--coral,     #e8916f);
+  --at-surface:     var(--paper-2,   #16140f);
+  --at-surface-2:   var(--paper-3,   #201d17);
+  --at-line:        var(--rule,      rgba(255,255,255,.14));
+  --at-text:        var(--ink,       #ece7dd);
+  --at-text-soft:   var(--ink-soft,  #b8b1a4);
+  --at-ui: var(--mono, ui-monospace, "SFMono-Regular", Menlo, monospace);
+}
+
+/* ── whole-post / resume control ───────────────────────────── */
+.at-bar {
+  display: flex; align-items: center; gap: .7rem; flex-wrap: wrap;
+  margin: 0 0 1.7rem;
+}
+.at-all {
+  display: inline-flex; align-items: center; gap: .55rem;
+  font-family: var(--at-ui); font-size: .72rem; letter-spacing: .11em;
+  text-transform: uppercase; color: var(--at-accent-deep);
+  background: var(--at-surface); border: 1px solid var(--at-line);
+  border-left: 3px solid var(--at-accent);
+  border-radius: 8px; padding: .62rem .95rem;
+  cursor: pointer; transition: background .18s ease, color .18s ease;
+}
+.at-all:hover { background: var(--at-surface-2); color: var(--at-text); }
+.at-all:focus-visible { outline: 2px solid var(--at-accent); outline-offset: 2px; }
+.at-all .at-all-ico {
+  width: 0; height: 0; border-style: solid;
+  border-width: 5px 0 5px 8px;
+  border-color: transparent transparent transparent currentColor;
+}
+.at-all[data-state="playing"] .at-all-ico {
+  width: 8px; height: 10px; border: none;
+  background: linear-gradient(to right, currentColor 0 34%, transparent 34% 66%, currentColor 66% 100%);
+}
+.at-bar .at-hint {
+  font-family: var(--at-ui); font-size: .64rem; letter-spacing: .08em;
+  color: var(--muted, #7d766a);
+}
+
+/* ── per-section player row ────────────────────────────────── */
+.at-tour .listen { position: relative; scroll-margin-top: 20vh; }
+
+.at-tour .listen[data-at-done="1"] {
+  border-left-color: var(--at-accent-deep);
+}
+.at-tour .listen[data-at-done="1"] .label::after {
+  content: " ✓"; color: var(--at-accent); letter-spacing: 0;
+}
+.at-tour .listen[data-at-current="1"] { border-left-color: var(--at-warm); }
+
+/* absorb pop — the player "catches" the FAB */
+.at-absorb { animation: at-absorb .42s cubic-bezier(.22,.9,.24,1); }
+@keyframes at-absorb {
+  0%   { transform: scale(1);    box-shadow: 0 0 0 0 rgba(47,196,180,0); }
+  38%  { transform: scale(1.035); box-shadow: 0 0 0 7px rgba(47,196,180,.16); }
+  100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(47,196,180,0); }
+}
+
+/* ── section flash: bind the audio to the words it narrates ── */
+.at-section { position: relative; border-radius: 12px; }
+.at-section::before {
+  content: ""; position: absolute; pointer-events: none;
+  inset: -.6rem -1rem; border-radius: 14px;
+  background: linear-gradient(180deg,
+              rgba(47,196,180,.16), rgba(232,145,111,.10) 62%, transparent 100%);
+  box-shadow: inset 0 0 0 1px rgba(47,196,180,.22);
+  opacity: 0; transition: opacity .55s ease;
+}
+.at-section.at-flash::before { opacity: 1; transition: opacity .12s ease; }
+.at-section.at-flash > p,
+.at-section.at-flash > ul,
+.at-section.at-flash > ol,
+.at-section.at-flash > h2,
+.at-section.at-flash > h3 { color: var(--at-accent-deep); transition: color .12s ease; }
+.at-section > p, .at-section > ul, .at-section > ol,
+.at-section > h2, .at-section > h3 { transition: color .6s ease; }
+
+/* ── the directional FAB ───────────────────────────────────── */
+.at-fab {
+  position: fixed; left: 1rem; z-index: 60;
+  width: 56px; height: 56px; padding: 0; margin: 0;
+  border: none; border-radius: 50%; cursor: pointer;
+  background: var(--at-surface-2);
+  box-shadow: 0 10px 30px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.09),
+              0 0 22px -6px var(--at-accent);
+  display: grid; place-items: center;
+  opacity: 0; transform: scale(.7) translateY(6px);
+  transition: opacity .24s ease, transform .3s cubic-bezier(.2,.9,.24,1);
+  pointer-events: none;
+}
+.at-fab[data-pos="below"] { bottom: 1.15rem; top: auto; }
+.at-fab[data-pos="above"] { top: var(--at-fab-top, 4.6rem); bottom: auto; }
+.at-fab.at-show { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
+.at-fab:focus-visible { outline: 2px solid var(--at-accent); outline-offset: 3px; }
+
+.at-fab svg { position: absolute; inset: 0; width: 56px; height: 56px; transform: rotate(-90deg); }
+.at-fab .at-ring-bg   { stroke: rgba(255,255,255,.16); }
+.at-fab .at-ring-fg   { stroke: var(--at-accent); transition: stroke-dashoffset .18s linear; }
+.at-fab circle { fill: none; stroke-width: 3; stroke-linecap: round; }
+
+.at-fab .at-num {
+  position: relative; font-family: var(--at-ui); font-size: .95rem;
+  font-weight: 700; color: var(--at-text); letter-spacing: .01em;
+  text-shadow: 0 1px 0 rgba(0,0,0,.35);
+}
+.at-fab .at-dir {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  font-size: .62rem; color: var(--at-accent); line-height: 1;
+}
+.at-fab[data-pos="below"] .at-dir { bottom: 7px; }
+.at-fab[data-pos="above"] .at-dir { top: 7px; }
+
+/* handoff attention: pulse + number flip */
+.at-fab.at-handoff { animation: at-pulse .78s cubic-bezier(.2,.85,.3,1); }
+.at-fab.at-handoff .at-num { animation: at-flip .5s cubic-bezier(.3,.8,.2,1); }
+@keyframes at-pulse {
+  0%   { box-shadow: 0 10px 30px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.09), 0 0 0 0 rgba(47,196,180,.55); }
+  55%  { box-shadow: 0 10px 30px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.09), 0 0 0 14px rgba(47,196,180,0); }
+  100% { box-shadow: 0 10px 30px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.09), 0 0 0 0 rgba(47,196,180,0); }
+}
+@keyframes at-flip {
+  0%   { transform: rotateX(0deg);   opacity: 1; }
+  49%  { transform: rotateX(90deg);  opacity: .15; }
+  50%  { transform: rotateX(-90deg); opacity: .15; }
+  100% { transform: rotateX(0deg);   opacity: 1; }
+}
+
+/* merge: the FAB travels the last inch into the player and dissolves */
+.at-fab.at-merging {
+  transition: transform .26s cubic-bezier(.4,0,.7,.2), opacity .26s ease-in;
+  transform: translate(var(--at-mx, 0px), var(--at-my, 0px)) scale(.28);
+  opacity: 0; pointer-events: none;
+}
+
+/* ── phone ─────────────────────────────────────────────────── */
+@media (max-width: 46rem) {
+  .at-fab { width: 50px; height: 50px; left: .7rem; }
+  .at-fab svg { width: 50px; height: 50px; }
+  .at-fab .at-num { font-size: .86rem; }
+  .at-fab[data-pos="below"] { bottom: .8rem; }
+  .at-section::before { inset: -.5rem -.7rem; }
+}
+
+/* ── light theme nudges ────────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  .at-fab {
+    background: var(--warm-white, #fff);
+    box-shadow: 0 10px 26px rgba(33,30,26,.20), 0 0 0 1px rgba(33,30,26,.12),
+                0 0 20px -8px var(--at-accent);
+  }
+  .at-fab .at-ring-bg { stroke: rgba(33,30,26,.14); }
+  .at-fab .at-num { text-shadow: none; }
+  .at-section::before {
+    background: linear-gradient(180deg,
+                rgba(16,169,155,.15), rgba(217,119,87,.10) 62%, transparent 100%);
+    box-shadow: inset 0 0 0 1px rgba(16,169,155,.28);
+  }
+  @keyframes at-pulse {
+    0%   { box-shadow: 0 10px 26px rgba(33,30,26,.20), 0 0 0 1px rgba(33,30,26,.12), 0 0 0 0 rgba(16,169,155,.5); }
+    55%  { box-shadow: 0 10px 26px rgba(33,30,26,.20), 0 0 0 1px rgba(33,30,26,.12), 0 0 0 13px rgba(16,169,155,0); }
+    100% { box-shadow: 0 10px 26px rgba(33,30,26,.20), 0 0 0 1px rgba(33,30,26,.12), 0 0 0 0 rgba(16,169,155,0); }
+  }
+}
+
+/* ── reduced motion: opacity only, no travel, no pop ───────── */
+@media (prefers-reduced-motion: reduce) {
+  .at-fab,
+  .at-fab.at-merging { transition: opacity .12s linear; transform: none; }
+  .at-fab.at-show { transform: none; }
+  .at-fab.at-merging { opacity: 0; }
+  .at-fab.at-handoff { animation: none; }
+  .at-fab.at-handoff .at-num { animation: none; }
+  .at-fab .at-ring-fg { transition: none; }
+  .at-absorb { animation: none; }
+  .at-section::before { transition: opacity .12s linear; }
+  .at-section.at-flash > p, .at-section.at-flash > ul, .at-section.at-flash > ol,
+  .at-section.at-flash > h2, .at-section.at-flash > h3 { transition: none; }
+  .at-section > p, .at-section > ul, .at-section > ol,
+  .at-section > h2, .at-section > h3 { transition: none; }
+}

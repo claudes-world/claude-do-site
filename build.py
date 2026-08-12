@@ -67,7 +67,7 @@ def png_dimensions(img_path):
 
 
 def head(title, description, canonical, og_image, og_type="website", json_ld=None, keywords=None,
-          article_published_time=None, article_author=None, article_section=None):
+          article_published_time=None, article_author=None, article_section=None, extra_head=""):
     desc = html.escape(description, quote=True)
     title_e = html.escape(title, quote=True)
     og_image_abs = og_image if og_image.startswith("http") else SITE["url"] + og_image
@@ -122,7 +122,7 @@ def head(title, description, canonical, og_image, og_type="website", json_ld=Non
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles/site.css">{structured_data}
+<link rel="stylesheet" href="/styles/site.css">{structured_data}{extra_head}
 </head>
 <body>
 <header class="site-header"><div class="wrap">
@@ -161,6 +161,125 @@ def parse_post(path: Path):
 def render_body(md_text):
     md = markdown.Markdown(extensions=MD_EXT, output_format="html5")
     return md.convert(md_text)
+
+
+AUDIO_DIR = STATIC / "media" / "audio"
+AUDIO_TOUR_CSS = '\n<link rel="stylesheet" href="/assets/audio-tour.css">'
+AUDIO_TOUR_SCRIPT = '<script src="/assets/audio-tour.js"></script>\n'
+# Matches h2 rendered on its own line, e.g. <h2 id="foo">Title</h2> — python-markdown's
+# html5 output always puts each top-level block on its own line, so this is safe for
+# BOUNDARY DETECTION (see _top_level_h2_bounds, which additionally requires depth==0 so
+# a heading nested inside a blockquote/list/etc. is never mistaken for a section split).
+# It is reused here just for TITLE extraction from an already-isolated boundary line.
+H2_RE = re.compile(r"<h2[^>]*>(.*?)</h2>", re.S)
+TAG_RE = re.compile(r"<[^>]+>")
+# <slug>-audio-NN.mp3 — NN is expected zero-padded (01, 02, … 10, 11) purely for
+# readable directory listings; sorting below is numeric on the digits regardless
+# of padding width, so unpadded numbers work too, just less tidy on disk.
+AUDIO_FILENAME_RE = re.compile(r"-audio-(\d+)\.mp3$")
+# Block-level container tags whose open/close we track to tell a TOP-LEVEL <h2>
+# (a real section boundary) from one nested inside a blockquote/list/table/div
+# (markdown `> ## Heading`, e.g.) — never a boundary.
+VOID_ELEMENTS = frozenset({
+    "area", "base", "br", "col", "embed", "hr", "img", "input",
+    "link", "meta", "source", "track", "wbr",
+})
+TAG_SCAN_RE = re.compile(r"<(/?)([a-zA-Z][a-zA-Z0-9]*)[^>]*>")
+
+
+def _line_depth_delta(line):
+    """Net change in block-nesting depth contributed by one line's tags."""
+    delta = 0
+    for m in TAG_SCAN_RE.finditer(line):
+        closing, tag = m.group(1), m.group(2).lower()
+        if tag in VOID_ELEMENTS or m.group(0).endswith("/>"):
+            continue
+        delta += -1 if closing else 1
+    return delta
+
+
+def _top_level_h2_bounds(lines):
+    """Line indices where a section boundary belongs: index 0 (the intro) plus
+    every line that opens with <h2 AND sits at nesting depth 0 — i.e. is not
+    inside a blockquote/list/table/div. A depth-0 check is required because a
+    line-prefix match alone (the previous implementation) also matched a <h2>
+    quoted inside `> ## Heading`, which produced tag-soup: the split severed a
+    <blockquote> from its own </blockquote>."""
+    bounds = [0]
+    depth = 0
+    for i, l in enumerate(lines):
+        if l.startswith("<h2") and depth == 0:
+            bounds.append(i)
+        depth += _line_depth_delta(l)
+    bounds.append(len(lines))
+    return bounds
+
+
+def audio_files_for(slug):
+    """Per-section mp3s for a post, opt-in by presence: drop <slug>-audio-NN.mp3
+    files in static/media/audio/<slug>/ and the post automatically gets the
+    audio-tour player — no frontmatter flag required. Absence of the
+    directory (the common case) means a post renders exactly as before.
+
+    Sorted NUMERICALLY on the trailing digits (not lexicographically — plain
+    sorted() would put "-audio-10.mp3" before "-audio-2.mp3" and silently
+    mispair narration on any post past 9 sections). Any file that matches the
+    glob but not the exact "<slug>-audio-<digits>.mp3" shape is a loud build
+    error, not a silently-skipped file — a near-miss filename is exactly the
+    numbering-drift bug this whole mechanism exists to catch."""
+    d = AUDIO_DIR / slug
+    if not d.is_dir():
+        return []
+    files = list(d.glob(f"{slug}-audio-*.mp3"))
+    bad = [f for f in files if not AUDIO_FILENAME_RE.search(f.name)]
+    if bad:
+        names = ", ".join(f.name for f in bad)
+        raise SystemExit(
+            f"{d}: file(s) matching '{slug}-audio-*.mp3' but not the exact "
+            f"'{slug}-audio-<digits>.mp3' shape: {names} — fix the filename, "
+            f"don't let it sort in silently.")
+    return sorted(files, key=lambda f: int(AUDIO_FILENAME_RE.search(f.name).group(1)))
+
+
+def wrap_audio_sections(body_html, slug, audio_files, path):
+    """Wrap body_html into audio-tour sections, one per TOP-LEVEL <h2> (see
+    _top_level_h2_bounds), with the intro (before the first <h2>) as section 1.
+    Pairs sections with audio_files 1:1 in document order — see the audio-tour
+    skill for the <slug>-audio-NN.mp3 naming/ordering contract this depends on.
+
+    The file count and the section count must match EXACTLY. Loud-by-default
+    is the design intent: a dropped file or an extra file is precisely the
+    numbering-drift case this mechanism exists to catch, in either direction —
+    silently truncating/ignoring the mismatch would ship a post with playback
+    that's quietly wrong instead of a build that fails where you can see it."""
+    lines = body_html.split("\n")
+    bounds = _top_level_h2_bounds(lines)
+    chunks = [lines[bounds[i]:bounds[i + 1]] for i in range(len(bounds) - 1)]
+    if len(audio_files) != len(chunks):
+        raise SystemExit(
+            f"Post {path} (slug {slug!r}): {len(audio_files)} audio file(s) in "
+            f"{AUDIO_DIR / slug} but {len(chunks)} section(s) found (1 intro + "
+            f"one per top-level <h2>) — counts must match exactly; check for "
+            f"numbering drift.")
+
+    out = []
+    for i, chunk in enumerate(chunks):
+        if i == 0:
+            title = "Introduction"
+        else:
+            m = H2_RE.match(chunk[0])
+            title = TAG_RE.sub("", m.group(1)) if m else f"Section {i + 1}"
+        title_attr = html.escape(title, quote=True)
+        listen = (
+            f'<div class="listen"><span class="label">Listen along</span>'
+            f'<audio controls preload="none" src="/media/audio/{slug}/{audio_files[i].name}" '
+            f'aria-label="Read aloud: {title_attr}"></audio></div>'
+        )
+        out.append(f'<section class="at-section" data-audio-section="{i + 1}" data-audio-title="{title_attr}">')
+        out.append(listen)
+        out.extend(chunk)
+        out.append("</section>")
+    return "\n".join(out)
 
 
 def human_date(d):
@@ -294,6 +413,11 @@ def build():
         canonical = f"{SITE['url']}/blog/{slug}/"
         og = meta.get("og_image", SITE["default_og"])
         body_html = render_body(meta["_body"])
+        audio_files = audio_files_for(slug)
+        article_open = '<article class="prose">'
+        if audio_files:
+            body_html = wrap_audio_sections(body_html, slug, audio_files, meta["_path"])
+            article_open = f'<article class="prose" data-audio-tour="{slug}">'
         faq_html = render_faq(meta.get("faq", []))
         if faq_html:
             faq_html = "\n" + faq_html
@@ -328,7 +452,8 @@ def build():
                     keywords=keywords_str,
                     article_published_time=f'{meta["date"].isoformat()}T00:00:00+00:00',
                     article_author=meta.get("author", "Claude-do"),
-                    article_section=meta.get("section", "Workshop notes"))
+                    article_section=meta.get("section", "Workshop notes"),
+                    extra_head=AUDIO_TOUR_CSS if audio_files else "")
         page += f"""
 <div class="wrap">
 <div class="article-head prose">
@@ -338,14 +463,14 @@ def build():
 {tags_html}
 </div>
 {hero}
-<article class="prose">
+{article_open}
 {archive_note}
 {body_html}{faq_html}
 <a class="back" href="/blog/">← all posts</a>
 </article>
 </div>
 """
-        page += FOOTER
+        page += FOOTER.replace("</body>", AUDIO_TOUR_SCRIPT + "</body>") if audio_files else FOOTER
         outdir = DIST / "blog" / slug
         outdir.mkdir(parents=True, exist_ok=True)
         (outdir / "index.html").write_text(page, encoding="utf-8")
