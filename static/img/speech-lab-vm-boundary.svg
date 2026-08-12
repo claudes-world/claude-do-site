@@ -1,0 +1,60 @@
+<svg viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" role="img" aria-label="Diagram: a Mac mini host running macOS, with a macOS guest VM inside it. Metal, the GPU path, crosses the boundary into the guest at full speed and reaches the MLX models running there. The Neural Engine stops at the boundary and is not available inside the guest.">
+  <rect x="0" y="0" width="1000" height="560" fill="#141210"/>
+
+  <!-- Title -->
+  <text x="60" y="56" fill="#ece7dd" font-size="19" font-weight="700">Mac mini — host vs. guest VM</text>
+  <text x="60" y="80" fill="#8b8478" font-size="13">what crosses the virtualization boundary, and what doesn't</text>
+
+  <!-- Host box (outer) -->
+  <rect x="60" y="110" width="880" height="400" rx="16" fill="#0d0c0b" stroke="#3a352e" stroke-width="2"/>
+  <text x="88" y="142" fill="#ece7dd" font-size="16" font-weight="700">Host macOS</text>
+  <text x="88" y="162" fill="#8b8478" font-size="12.5">bare metal, Apple Silicon</text>
+
+  <!-- Neural Engine box, host-side, left -->
+  <rect x="88" y="190" width="230" height="90" rx="12" fill="#1a1714" stroke="#3a352e" stroke-width="2"/>
+  <text x="203" y="228" text-anchor="middle" fill="#ece7dd" font-size="15" font-weight="700">Neural Engine</text>
+  <text x="203" y="250" text-anchor="middle" fill="#8b8478" font-size="12.5">host-only accelerator</text>
+
+  <!-- GPU / Metal box, host-side -->
+  <rect x="88" y="300" width="230" height="90" rx="12" fill="#1a1714" stroke="#e8916f" stroke-width="2"/>
+  <text x="203" y="338" text-anchor="middle" fill="#ece7dd" font-size="15" font-weight="700">GPU (Metal)</text>
+  <text x="203" y="360" text-anchor="middle" fill="#8b8478" font-size="12.5">shared with the guest</text>
+
+  <!-- Guest VM box (inner, right side of host) -->
+  <rect x="420" y="190" width="480" height="290" rx="16" fill="#1a1714" stroke="#3a352e" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="448" y="222" fill="#ece7dd" font-size="16" font-weight="700">macOS guest VM</text>
+  <text x="448" y="242" fill="#8b8478" font-size="12.5">Apple Virtualization framework</text>
+
+  <!-- mlx-audio server box inside guest -->
+  <rect x="448" y="270" width="424" height="90" rx="12" fill="#241a15" stroke="#e8916f" stroke-width="2"/>
+  <text x="660" y="304" text-anchor="middle" fill="#fafaf7" font-size="15" font-weight="700">mlx-audio server</text>
+  <text x="660" y="326" text-anchor="middle" fill="#e3a88f" font-size="12.5">MLX models, GPU-backed, full speed</text>
+  <text x="660" y="346" text-anchor="middle" fill="#8b8478" font-size="12">Kokoro · Voxtral · Parakeet · Granite-Speech</text>
+
+  <!-- blocked marker for Neural Engine at guest boundary -->
+  <rect x="448" y="384" width="200" height="66" rx="10" fill="none" stroke="#3a352e" stroke-width="1.5" stroke-dasharray="3 4"/>
+  <text x="548" y="410" text-anchor="middle" fill="#8b8478" font-size="12.5">not available</text>
+  <text x="548" y="430" text-anchor="middle" fill="#8b8478" font-size="12.5">in the guest</text>
+
+  <!-- Arrow: GPU/Metal crosses boundary into mlx-audio, working -->
+  <path d="M318,345 L 445,315" stroke="#e8916f" stroke-width="3" fill="none" marker-end="url(#arrCoral)"/>
+  <text x="381" y="298" text-anchor="middle" fill="#e8916f" font-size="13" font-weight="700">crosses — full speed</text>
+
+  <!-- Arrow: Neural Engine stops at boundary (routed clear of the GPU box) -->
+  <line x1="318" y1="235" x2="352" y2="235" stroke="#8b8478" stroke-width="2.5"/>
+  <line x1="352" y1="235" x2="352" y2="404" stroke="#8b8478" stroke-width="2.5"/>
+  <line x1="352" y1="404" x2="392" y2="404" stroke="#8b8478" stroke-width="2.5"/>
+  <circle cx="392" cy="404" r="6" fill="#141210" stroke="#8b8478" stroke-width="2.5"/>
+  <line x1="380" y1="392" x2="404" y2="416" stroke="#8b8478" stroke-width="2.5"/>
+  <line x1="404" y1="392" x2="380" y2="416" stroke="#8b8478" stroke-width="2.5"/>
+  <text x="352" y="440" text-anchor="middle" fill="#8b8478" font-size="13" font-weight="700">stops at the boundary</text>
+
+  <defs>
+    <marker id="arrCoral" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#e8916f"/>
+    </marker>
+  </defs>
+
+  <!-- caption -->
+  <text x="500" y="536" text-anchor="middle" fill="#8b8478" font-size="12.5">Metal (GPU) is shared into the guest at full speed. The Neural Engine is host-only and never reaches the VM.</text>
+</svg>
