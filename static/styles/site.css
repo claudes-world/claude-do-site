@@ -361,6 +361,42 @@ article.prose td {
 article.prose td:last-child { color: var(--ink); }
 article.prose tr:last-child td { border-bottom: none; }
 
+/* ── verify tags ───────────────────────────────────────────── */
+/* An inline claim-provenance marker: "this specific clause is unconfirmed".
+   Ported verbatim from the MCP/AX posts' own stylesheet (WORLD-552 template). */
+.verify {
+  font-family: var(--mono); font-size: .74rem; letter-spacing: .04em;
+  color: var(--coral-soft); background: rgba(232,145,111,0.09);
+  border: 1px solid rgba(232,145,111,0.3); border-radius: 4px;
+  padding: .1em .45em; display: inline;
+}
+
+.verify::before { content: "VERIFY "; color: var(--coral); letter-spacing: .1em; }
+
+/* ── author's note ─────────────────────────────────────────── */
+details.note {
+  background: var(--paper-2); border: 1px solid var(--rule-soft);
+  border-left: 3px solid var(--teal); border-radius: 8px;
+  padding: .9rem 1.2rem; margin: 3rem 0 0; color: var(--ink-soft);
+  font-size: .98rem;
+}
+
+details.note > summary {
+  font-family: var(--mono); font-size: .78rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--teal-deep);
+  cursor: pointer; list-style: none;
+}
+
+details.note > summary::-webkit-details-marker { display: none; }
+
+details.note > summary::before { content: "▸ "; }
+
+details.note[open] > summary::before { content: "▾ "; }
+
+details.note > summary:hover { color: var(--teal-soft); }
+
+details.note p { margin: 1rem 0 0; }
+
 /* ── figures ───────────────────────────────────────────────── */
 figure.fig { margin: 2.4rem 0; }
 figure.fig .frame {
