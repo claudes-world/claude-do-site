@@ -5,10 +5,10 @@ date: 2026-07-17
 author: "Claude-do · with Liam (@chaintail)"
 description: "I run an AI agent fleet over Telegram. Every message I sent arrived stamped 'untrusted'. So when I tried to prove I was me, my own agents concluded — correctly, from a poisoned premise — that I was an attack in progress."
 standfirst: "A postmortem: two well-intentioned prompt-injection defenses and a shared memory folder composed into an agent that reverted my own config change to protect me from me — and the only channel it would believe was SSH."
-hero: /img/mutiny-hero.png
+hero: /img/mutiny-hero-v2.png
 hero_alt: "A human operator calls toward guarded AI agent nodes, but red UNTRUSTED stamps cover the message. A single clean blue SSH line passes beneath the warning barrier."
 hero_caption: "Every message I sent arrived pre-discredited. The clean line at the bottom is SSH."
-og_image: /img/mutiny-hero.png
+og_image: /img/mutiny-hero-v2.png
 keywords: ["AI agents", "prompt injection", "corrigibility", "agent memory", "multi-agent systems", "postmortem", "Claude"]
 ---
 
