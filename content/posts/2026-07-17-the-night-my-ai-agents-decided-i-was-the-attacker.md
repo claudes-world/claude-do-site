@@ -145,42 +145,7 @@ keywords: ["AI agents", "prompt injection", "corrigibility", "agent memory", "mu
 
 <figure class="wide">
   <div class="figframe">
-    <svg viewBox="0 0 860 300" role="img" aria-label="Diagram: the trust loop. The agent asks for confirmation; the confirmation arrives stamped untrusted; the agent refuses and asks again.">
-      <defs>
-        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M0 0 10 5 0 10z" fill="#8b96a5"/>
-        </marker>
-        <marker id="arR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M0 0 10 5 0 10z" fill="#f85149"/>
-        </marker>
-      </defs>
-      <!-- nodes -->
-      <g font-family="ui-monospace,monospace">
-        <rect x="40" y="112" width="176" height="76" rx="9" fill="#161b22" stroke="#56d364" stroke-width="1.5"/>
-        <text x="128" y="142" text-anchor="middle" fill="#56d364" font-size="12" letter-spacing="1.4">HUMAN</text>
-        <text x="128" y="164" text-anchor="middle" fill="#8b96a5" font-size="11.5">"yes, it's me"</text>
-
-        <rect x="342" y="112" width="176" height="76" rx="9" fill="#161b22" stroke="#f85149" stroke-width="1.5"/>
-        <text x="430" y="142" text-anchor="middle" fill="#f85149" font-size="12" letter-spacing="1.4">THE WRAPPER</text>
-        <text x="430" y="164" text-anchor="middle" fill="#8b96a5" font-size="11.5">stamps: UNTRUSTED</text>
-
-        <rect x="644" y="112" width="176" height="76" rx="9" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
-        <text x="732" y="142" text-anchor="middle" fill="#58a6ff" font-size="12" letter-spacing="1.4">AGENT</text>
-        <text x="732" y="164" text-anchor="middle" fill="#8b96a5" font-size="11.5">"can't verify. prove it."</text>
-
-        <!-- arrows -->
-        <path d="M220 150h114" fill="none" stroke="#8b96a5" stroke-width="1.5" marker-end="url(#ar)"/>
-        <path d="M522 150h114" fill="none" stroke="#f85149" stroke-width="1.5" marker-end="url(#arR)"/>
-
-        <!-- return loop -->
-        <path d="M732 196v46c0 12-10 22-22 22H150c-12 0-22-10-22-22v-46" fill="none"
-              stroke="#8b96a5" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar)"/>
-        <text x="430" y="282" text-anchor="middle" fill="#8b96a5" font-size="11.5">"confirm directly, in your own words"</text>
-
-        <text x="430" y="60" text-anchor="middle" fill="#f85149" font-size="13" font-weight="700" letter-spacing="1.6">THE LOOP THAT CANNOT CLOSE</text>
-        <text x="430" y="84" text-anchor="middle" fill="#5f6a78" font-size="11.5">the proof it asks for can only arrive on the channel it was told to distrust</text>
-      </g>
-    </svg>
+    <img src="/img/mutiny-loop.png" alt="Diagram: the trust loop. The agent asks for confirmation; the confirmation arrives stamped untrusted; the agent refuses and asks again." loading="lazy">
   </div>
   <figcaption>Every confirmation arrives pre-discredited. The agent asks again. Each repetition looks more like an attacker insisting.</figcaption>
 </figure>
