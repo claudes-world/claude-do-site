@@ -19,6 +19,15 @@ from email.utils import format_datetime
 from pathlib import Path
 from urllib.parse import quote
 from xml.sax.saxutils import escape as xml_escape
+from xml.sax.saxutils import quoteattr as _xml_quoteattr
+
+
+def xml_attr(value) -> str:
+    """Escape a value for an XML ATTRIBUTE context (codex review 2026-08-18
+    MUST): plain escape() leaves double-quotes intact, so a quote inside an
+    author-supplied audio_url breaks well-formedness. Returns the value
+    INCLUDING surrounding quotes."""
+    return _xml_quoteattr(str(value))
 
 import yaml
 import markdown
@@ -705,6 +714,15 @@ def build_daily_prior():
     posts = [parse_post(p) for p in sorted(src_dir.glob("*.md")) if p.name != "README.md"]
     for meta in posts:
         validate_daily_prior_post(meta)
+    # Loud duplicate-slug guard (codex review 2026-08-18): two episodes with
+    # one slug silently overwrite each other's index.html otherwise.
+    seen_slugs = {}
+    for meta in posts:
+        if meta["slug"] in seen_slugs:
+            raise SystemExit(
+                f"Daily Prior: duplicate slug {meta['slug']!r} in "
+                f"{meta['_path']} and {seen_slugs[meta['slug']]}")
+        seen_slugs[meta["slug"]] = meta.get("_path", "?")
     posts.sort(key=lambda m: str(m["date"]), reverse=True)
 
     live = [m for m in posts if not m["draft"]]
@@ -733,6 +751,11 @@ def build_daily_prior():
         rss_link = (f'\n<link rel="alternate" type="application/rss+xml" '
                     f'title="{html.escape(DAILY_PRIOR["name"], quote=True)}" '
                     f'href="{SITE["url"]}/daily-prior/podcast.xml">')
+        if meta["draft"]:
+            # Drafts are preview-only: absent from index/feed/sitemap, but the
+            # PAGE itself must also refuse indexing (codex review 2026-08-18) —
+            # a leaked preview URL should not end up in a search index.
+            rss_link += '\n<meta name="robots" content="noindex, nofollow">' 
         page = head(f'{meta["title"]} — {DAILY_PRIOR["name"]}', meta["description"],
                     canonical, og, og_type="article",
                     article_published_time=f'{meta["date"].isoformat()}T00:00:00+00:00',
@@ -827,7 +850,7 @@ def build_daily_prior_podcast_rss(live_posts):
 <guid isPermaLink="false">{guid}</guid>
 <pubDate>{pub_date}</pubDate>
 <description>{xml_escape(meta.get('description', ''))}</description>
-<enclosure url="{xml_escape(meta['audio_url'])}" length="{int(meta['audio_bytes'])}" type="{xml_escape(meta['audio_type'])}"/>
+<enclosure url={xml_attr(meta['audio_url'])} length="{int(meta['audio_bytes'])}" type={xml_attr(meta['audio_type'])}/>
 <itunes:title>{xml_escape(meta['title'])}</itunes:title>
 <itunes:summary>{xml_escape(meta.get('description', ''))}</itunes:summary>
 <itunes:author>{xml_escape(meta.get('author', DAILY_PRIOR['author']))}</itunes:author>
@@ -850,7 +873,7 @@ def build_daily_prior_podcast_rss(live_posts):
 <itunes:name>{xml_escape(DAILY_PRIOR['owner_name'])}</itunes:name>
 <itunes:email>{xml_escape(DAILY_PRIOR['owner_email'])}</itunes:email>
 </itunes:owner>
-<itunes:image href="{xml_escape(SITE['url'] + DAILY_PRIOR['image'])}"/>
+<itunes:image href={xml_attr(SITE['url'] + DAILY_PRIOR['image'])}/>
 <itunes:category text="{xml_escape(DAILY_PRIOR['category'])}"/>
 <itunes:explicit>{DAILY_PRIOR['explicit']}</itunes:explicit>
 {items}</channel>

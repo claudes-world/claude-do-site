@@ -143,5 +143,67 @@ class DailyPriorBuildTests(unittest.TestCase):
         self.assertTrue((self.dist / "rss.xml").exists())
 
 
+class DailyPriorFixRoundTests(unittest.TestCase):
+    """Regression tests for the 2026-08-18 codex review fix round."""
+
+    def test_xml_attr_quotes_survive_attribute_context(self):
+        # MUST fix: a double-quote inside audio_url must not break podcast.xml.
+        # quoteattr may pick single- or double-quote wrapping; the contract is
+        # well-formedness + round-trip, not a specific entity.
+        ugly = 'https://media.claude.do/a"b&c.mp3'
+        frag = f"<enclosure url={build.xml_attr(ugly)} length=\"1\" type={build.xml_attr('audio/mpeg')}/>"
+        el = ET.fromstring(frag)  # raises if not well-formed
+        self.assertEqual(el.get("url"), ugly)  # value survives exactly
+
+    def test_duplicate_slug_raises_loudly(self):
+        import copy
+        with tempfile.TemporaryDirectory() as td:
+            td = pathlib.Path(td)
+            src = td / "content" / "daily-prior"
+            src.mkdir(parents=True)
+            for name in ("a.md", "b.md"):
+                (src / name).write_text(
+                    "---\n"
+                    "title: Dup\n"
+                    "slug: same-slug\n"
+                    "date: 2026-08-18\n"
+                    f"guid: {uuid.uuid4()}\n"
+                    "description: d\n"
+                    "---\n\nbody\n",
+                    encoding="utf-8")
+            old_content, old_dist = build.CONTENT, build.DIST
+            try:
+                build.CONTENT, build.DIST = td / "content", td / "dist"
+                with self.assertRaises(SystemExit) as cm:
+                    build.build_daily_prior()
+                self.assertIn("duplicate slug", str(cm.exception))
+            finally:
+                build.CONTENT, build.DIST = old_content, old_dist
+
+    def test_draft_page_carries_noindex(self):
+        # Fresh build: DailyPriorBuildTests' dist is torn down by the time
+        # this class runs.
+        td = pathlib.Path(tempfile.mkdtemp())
+        old_dist = build.DIST
+        try:
+            build.DIST = td
+            (td).mkdir(exist_ok=True)
+            build.build_daily_prior()
+        finally:
+            build.DIST = old_dist
+        dist = td
+        drafts_dir = dist / "daily-prior" / "drafts"
+        pages = list(drafts_dir.glob("*/index.html"))
+        self.assertTrue(pages, "expected at least one built draft page")
+        for p in pages:
+            self.assertIn('name="robots" content="noindex', p.read_text(encoding="utf-8"))
+        # control: a LIVE episode page must NOT carry noindex
+        live_pages = [p for p in (dist / "daily-prior").glob("*/index.html")]
+        live_pages = [p for p in live_pages if "drafts" not in str(p)]
+        self.assertTrue(live_pages)
+        for p in live_pages:
+            self.assertNotIn('content="noindex', p.read_text(encoding="utf-8"))
+
+
 if __name__ == "__main__":
     unittest.main()
