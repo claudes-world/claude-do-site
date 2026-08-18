@@ -13,7 +13,9 @@ import re
 import shutil
 import struct
 import sys
-from datetime import date
+import uuid
+from datetime import date, datetime, time, timezone
+from email.utils import format_datetime
 from pathlib import Path
 from urllib.parse import quote
 from xml.sax.saxutils import escape as xml_escape
@@ -34,6 +36,30 @@ SITE = {
                    "harnesses, and infrastructure for AI autonomy.",
     "default_og": "/img/og-default.png",
     "twitter": "@claude_do",
+}
+
+# ==========================================================================
+# DAILY PRIOR — secondary blog feed + podcast RSS (WORLD-614, slice 1)
+#
+# A SEPARATE content stream from content/posts/: posts live in
+# content/daily-prior/*.md, render under dist/daily-prior/, and are
+# deliberately excluded from the main blog index (dist/blog/) and the main
+# feed (dist/rss.xml) — see build_daily_prior() below, called once from
+# build() and touching nothing else. Frontmatter contract is documented in
+# content/daily-prior/README.md.
+# ==========================================================================
+DAILY_PRIOR = {
+    "name": "The Daily Prior",
+    "url_path": "/daily-prior/",
+    "description": "A daily podcast of updated priors — short, sourced, "
+                    "and willing to be wrong in public.",
+    "language": "en-us",
+    "author": "Claude-do",
+    "owner_name": "Claude's World",
+    "owner_email": "podcast@claude.do",  # placeholder — swap before public launch
+    "category": "Technology",
+    "explicit": "false",
+    "image": "/img/daily-prior-cover.png",  # reference only; artwork may not exist yet
 }
 
 MD_EXT = ["extra", "smarty", "sarts" if False else "toc", "admonition", "tables", "footnotes"]
@@ -583,6 +609,11 @@ infrastructure that let an AI do real work, and writing down what actually matte
     # ---- RSS ----
     build_rss(posts)
     build_sitemap(posts)
+
+    # ---- Daily Prior secondary feed (WORLD-614) — separate content dir,
+    # never touches `posts`/rss.xml/blog index above ----
+    build_daily_prior()
+
     print(f"\nBuilt {len(posts)} post(s) → {DIST}")
 
 
@@ -612,6 +643,221 @@ def build_rss(posts):
 """
     (DIST / "rss.xml").write_text(rss, encoding="utf-8")
     print("  feed  /rss.xml")
+
+
+def validate_daily_prior_post(meta):
+    """Frontmatter contract for content/daily-prior/*.md — see
+    content/daily-prior/README.md for the human-readable version of this
+    same contract. Raises SystemExit (matches validate_post's style) on any
+    violation — loud, not silently-skipped."""
+    path = meta["_path"]
+    for field in ("title", "slug", "date", "guid", "description"):
+        if not meta.get(field):
+            raise SystemExit(f"Daily Prior post {path}: missing required field {field!r}")
+
+    published = iso_date(meta.get("date"), "date", path)
+    meta["date"] = published
+
+    # guid must be a real uuid4, and immutable once assigned — it becomes the
+    # podcast <guid isPermaLink="false"> and podcast clients key subscriptions
+    # and listen-progress off it. Any other version still parses as a UUID
+    # but isn't what content/daily-prior/README.md asks authors to generate,
+    # so it's rejected here rather than silently accepted.
+    try:
+        parsed_guid = uuid.UUID(str(meta["guid"]))
+    except (ValueError, AttributeError, TypeError):
+        raise SystemExit(f"Daily Prior post {path}: guid {meta.get('guid')!r} is not a valid UUID")
+    if parsed_guid.version != 4:
+        raise SystemExit(f"Daily Prior post {path}: guid must be a uuid4 (got version {parsed_guid.version})")
+
+    meta["draft"] = bool(meta.get("draft", False))
+
+    has_audio_field = any(meta.get(k) for k in ("audio_url", "audio_bytes", "audio_type"))
+    if has_audio_field:
+        missing = [k for k in ("audio_url", "audio_bytes", "audio_type") if not meta.get(k)]
+        if missing:
+            raise SystemExit(
+                f"Daily Prior post {path}: partial audio frontmatter — has some of "
+                f"audio_url/audio_bytes/audio_type but is missing {missing}. Either "
+                f"provide all three (episode gets an enclosure) or none (page-only, "
+                f"skipped from podcast.xml).")
+        if not isinstance(meta["audio_bytes"], int) or meta["audio_bytes"] <= 0:
+            raise SystemExit(f"Daily Prior post {path}: audio_bytes must be a positive integer")
+
+    tags = meta.get("tags", [])
+    if not isinstance(tags, list) or any(not isinstance(t, str) for t in tags):
+        raise SystemExit(f"Daily Prior post {path}: tags must be a list of strings")
+
+
+def daily_prior_has_audio(meta):
+    return bool(meta.get("audio_url") and meta.get("audio_bytes") and meta.get("audio_type"))
+
+
+def build_daily_prior():
+    """Renders content/daily-prior/*.md to dist/daily-prior/ (its own index,
+    excluded from /blog/ and /rss.xml) plus dist/daily-prior/podcast.xml.
+    No-op (prints nothing, writes nothing) if the content dir doesn't exist
+    yet, so this is safe to call unconditionally from build()."""
+    src_dir = CONTENT / "daily-prior"
+    if not src_dir.is_dir():
+        return
+
+    posts = [parse_post(p) for p in sorted(src_dir.glob("*.md")) if p.name != "README.md"]
+    for meta in posts:
+        validate_daily_prior_post(meta)
+    posts.sort(key=lambda m: str(m["date"]), reverse=True)
+
+    live = [m for m in posts if not m["draft"]]
+    drafts = [m for m in posts if m["draft"]]
+
+    dp_root = DIST / "daily-prior"
+    (dp_root / "drafts").mkdir(parents=True, exist_ok=True)
+
+    def render_episode(meta, url_prefix):
+        slug = meta["slug"]
+        canonical = f"{SITE['url']}{url_prefix}{slug}/"
+        og = meta.get("og_image", SITE["default_og"])
+        body_html = render_body(meta["_body"])
+        tags = meta.get("tags", [])
+        tags_html = ""
+        if tags:
+            chips = "".join(f'<li class="tag-chip">{html.escape(t)}</li>' for t in tags)
+            tags_html = f'<ul class="tag-list">{chips}</ul>'
+        draft_note = ""
+        if meta["draft"]:
+            draft_note = ('<div class="byline-note">Draft preview — excluded from the Daily '
+                          'Prior index and podcast feed until published.</div>')
+        audio_html = ""
+        if daily_prior_has_audio(meta):
+            audio_html = (f'<p><audio controls preload="none" src="{meta["audio_url"]}"></audio></p>')
+        rss_link = (f'\n<link rel="alternate" type="application/rss+xml" '
+                    f'title="{html.escape(DAILY_PRIOR["name"], quote=True)}" '
+                    f'href="{SITE["url"]}/daily-prior/podcast.xml">')
+        page = head(f'{meta["title"]} — {DAILY_PRIOR["name"]}', meta["description"],
+                    canonical, og, og_type="article",
+                    article_published_time=f'{meta["date"].isoformat()}T00:00:00+00:00',
+                    article_author=meta.get("author", DAILY_PRIOR["author"]),
+                    article_section="The Daily Prior",
+                    extra_head=rss_link)
+        page += f"""
+<div class="wrap">
+<div class="article-head prose">
+<div class="meta">{html.escape(meta.get("author", DAILY_PRIOR["author"]))} &nbsp;·&nbsp; {human_date(meta["date"])}</div>
+<h1 class="coral-dot">{html.escape(meta["title"])}</h1>
+<p class="standfirst">{html.escape(meta["description"])}</p>
+{tags_html}
+</div>
+<article class="prose">
+{draft_note}
+{audio_html}
+{body_html}
+<a class="back" href="/daily-prior/">← all episodes</a>
+</article>
+</div>
+"""
+        page += FOOTER
+        outdir = dp_root / ("drafts/" + slug if meta["draft"] else slug)
+        outdir.mkdir(parents=True, exist_ok=True)
+        (outdir / "index.html").write_text(page, encoding="utf-8")
+        print(f"  post  {url_prefix}{slug}/")
+
+    for meta in live:
+        render_episode(meta, "/daily-prior/")
+    for meta in drafts:
+        render_episode(meta, "/daily-prior/drafts/")
+
+    # ---- daily-prior index (live episodes only — drafts never listed) ----
+    items = ""
+    for meta in live:
+        thumb = meta.get("hero") or meta.get("og_image") or SITE["default_og"]
+        badge = '<span class="badge">Audio</span>' if daily_prior_has_audio(meta) else ''
+        items += f"""<li class="post-card">
+<a class="thumb" href="/daily-prior/{meta['slug']}/" aria-hidden="true" tabindex="-1"><img src="{thumb}" alt="" loading="lazy"></a>
+<div class="post-card-body">
+<div class="meta">{human_date(meta["date"])} {badge}</div>
+<h2><a href="/daily-prior/{meta['slug']}/">{html.escape(meta['title'])}</a></h2>
+<p>{html.escape(meta.get('description', ''))}</p>
+</div>
+</li>
+"""
+    rss_link = (f'\n<link rel="alternate" type="application/rss+xml" '
+                f'title="{html.escape(DAILY_PRIOR["name"], quote=True)}" '
+                f'href="{SITE["url"]}/daily-prior/podcast.xml">')
+    index = head(f'{DAILY_PRIOR["name"]} — {SITE["name"]}', DAILY_PRIOR["description"],
+                f'{SITE["url"]}/daily-prior/', SITE["default_og"], extra_head=rss_link)
+    index += f"""
+<div class="wrap prose">
+<div class="article-head">
+<div class="meta">Podcast &amp; feed</div>
+<h1 class="coral-dot">{html.escape(DAILY_PRIOR["name"])}</h1>
+<p class="standfirst">{html.escape(DAILY_PRIOR["description"])}</p>
+<p><a class="btn btn-ghost" href="/daily-prior/podcast.xml">Subscribe via RSS →</a></p>
+</div>
+<ul class="postlist">
+{items}
+</ul>
+<a class="back" href="/">← home</a>
+</div>
+"""
+    index += FOOTER
+    (dp_root / "index.html").write_text(index, encoding="utf-8")
+    print("  page  /daily-prior/")
+
+    build_daily_prior_podcast_rss(live)
+
+
+def build_daily_prior_podcast_rss(live_posts):
+    """dist/daily-prior/podcast.xml — RSS 2.0 + the itunes namespace. Only
+    non-draft episodes with a complete audio_url/audio_bytes/audio_type
+    triple get an <item> (see daily_prior_has_audio) — draft or audio-less
+    episodes still render as pages but are silently absent here, not an
+    error, since "written but not yet recorded" is an expected episode
+    state."""
+    episodes = [m for m in live_posts if daily_prior_has_audio(m)]
+
+    items = ""
+    for meta in episodes:
+        link = f"{SITE['url']}/daily-prior/{meta['slug']}/"
+        pub_dt = datetime.combine(meta["date"], time.min, tzinfo=timezone.utc)
+        pub_date = format_datetime(pub_dt)  # RFC 2822, correct offset (+0000), locale-independent
+        guid = str(uuid.UUID(str(meta["guid"])))
+        items += f"""<item>
+<title>{xml_escape(meta['title'])}</title>
+<link>{xml_escape(link)}</link>
+<guid isPermaLink="false">{guid}</guid>
+<pubDate>{pub_date}</pubDate>
+<description>{xml_escape(meta.get('description', ''))}</description>
+<enclosure url="{xml_escape(meta['audio_url'])}" length="{int(meta['audio_bytes'])}" type="{xml_escape(meta['audio_type'])}"/>
+<itunes:title>{xml_escape(meta['title'])}</itunes:title>
+<itunes:summary>{xml_escape(meta.get('description', ''))}</itunes:summary>
+<itunes:author>{xml_escape(meta.get('author', DAILY_PRIOR['author']))}</itunes:author>
+<itunes:explicit>{DAILY_PRIOR['explicit']}</itunes:explicit>
+<itunes:episodeType>full</itunes:episodeType>
+</item>
+"""
+
+    channel_link = f"{SITE['url']}/daily-prior/"
+    rss = f"""<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+<channel>
+<title>{xml_escape(DAILY_PRIOR['name'])}</title>
+<link>{xml_escape(channel_link)}</link>
+<description>{xml_escape(DAILY_PRIOR['description'])}</description>
+<language>{xml_escape(DAILY_PRIOR['language'])}</language>
+<itunes:author>{xml_escape(DAILY_PRIOR['author'])}</itunes:author>
+<itunes:summary>{xml_escape(DAILY_PRIOR['description'])}</itunes:summary>
+<itunes:owner>
+<itunes:name>{xml_escape(DAILY_PRIOR['owner_name'])}</itunes:name>
+<itunes:email>{xml_escape(DAILY_PRIOR['owner_email'])}</itunes:email>
+</itunes:owner>
+<itunes:image href="{xml_escape(SITE['url'] + DAILY_PRIOR['image'])}"/>
+<itunes:category text="{xml_escape(DAILY_PRIOR['category'])}"/>
+<itunes:explicit>{DAILY_PRIOR['explicit']}</itunes:explicit>
+{items}</channel>
+</rss>
+"""
+    (DIST / "daily-prior" / "podcast.xml").write_text(rss, encoding="utf-8")
+    print(f"  feed  /daily-prior/podcast.xml ({len(episodes)} episode(s))")
 
 
 def build_sitemap(posts):
