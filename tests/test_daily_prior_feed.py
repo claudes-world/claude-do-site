@@ -19,6 +19,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 import build  # noqa: E402
+from tools import upload_media  # noqa: E402
 
 ITUNES_NS = "{http://www.itunes.com/dtds/podcast-1.0.dtd}"
 
@@ -84,6 +85,20 @@ class DailyPriorBuildTests(unittest.TestCase):
         item = root.find("channel").find("item")
         # The fixture episode has date: 2026-08-18, rendered at UTC midnight.
         self.assertIn("+0000", item.find("pubDate").text)
+
+    # ---- enclosure URLs are the media-host frontmatter value, verbatim ----
+
+    def test_enclosure_url_is_media_host_url_verbatim(self):
+        root = ET.parse(self.dist / "daily-prior" / "podcast.xml").getroot()
+        enclosures = {item.find("title").text: item.find("enclosure").get("url")
+                      for item in root.find("channel").findall("item")}
+        # The launch episode's frontmatter audio_url, byte-for-byte.
+        self.assertEqual(
+            enclosures["The Daily Prior Launches"],
+            "https://media.claude.do/daily-prior/2026-08-18-the-daily-prior-launches.mp3")
+        for title, url in enclosures.items():
+            self.assertTrue(url.startswith(build.DAILY_PRIOR_MEDIA_BASE),
+                            f"{title!r} enclosure {url!r} is off the media host")
 
     # ---- GUID stability across rebuilds ----
 
@@ -203,6 +218,98 @@ class DailyPriorFixRoundTests(unittest.TestCase):
         self.assertTrue(live_pages)
         for p in live_pages:
             self.assertNotIn('content="noindex', p.read_text(encoding="utf-8"))
+
+
+class DailyPriorMediaHostGateTests(unittest.TestCase):
+    """R2 media-host wiring: local/relative/off-host audio_url is a loud
+    build failure — enclosures only ever point at media.claude.do."""
+
+    def _build_with_audio_url(self, audio_url):
+        with tempfile.TemporaryDirectory() as td:
+            td = pathlib.Path(td)
+            src = td / "content" / "daily-prior"
+            src.mkdir(parents=True)
+            (src / "ep.md").write_text(
+                "---\n"
+                "title: Local Audio Episode\n"
+                "slug: local-audio-episode\n"
+                "date: 2026-08-19\n"
+                f"guid: {uuid.uuid4()}\n"
+                "description: d\n"
+                f"audio_url: {audio_url}\n"
+                "audio_bytes: 12345\n"
+                "audio_type: audio/mpeg\n"
+                "---\n\nbody\n",
+                encoding="utf-8")
+            old_content, old_dist = build.CONTENT, build.DIST
+            try:
+                build.CONTENT, build.DIST = td / "content", td / "dist"
+                build.build_daily_prior()
+            finally:
+                build.CONTENT, build.DIST = old_content, old_dist
+
+    def test_local_relative_audio_path_fails_the_build(self):
+        for bad in ("/audio/ep.mp3", "audio/ep.mp3", "./ep.mp3",
+                    "https://claude.do/audio/ep.mp3",
+                    "http://media.claude.do/daily-prior/x/episode.mp3"):
+            with self.assertRaises(SystemExit, msg=bad) as cm:
+                self._build_with_audio_url(bad)
+            self.assertIn("media host", str(cm.exception))
+            self.assertIn(bad, str(cm.exception))
+
+    def test_media_host_audio_url_builds_clean(self):
+        # Negative control: the same episode with a media-host URL builds.
+        self._build_with_audio_url(
+            "https://media.claude.do/daily-prior/local-audio-episode/episode.mp3")
+
+
+class UploadMediaUnitTests(unittest.TestCase):
+    """tools/upload_media.py — pure request-building, no network."""
+
+    def test_content_type_mapping(self):
+        self.assertEqual(upload_media.content_type_for("episode.mp3"), "audio/mpeg")
+        self.assertEqual(upload_media.content_type_for("EP.MP3"), "audio/mpeg")
+        self.assertEqual(upload_media.content_type_for("cover.png"), "image/png")
+        self.assertEqual(upload_media.content_type_for("photo.jpg"), "image/jpeg")
+        self.assertEqual(upload_media.content_type_for("photo.jpeg"), "image/jpeg")
+        self.assertEqual(upload_media.content_type_for("notes.txt"),
+                         "application/octet-stream")
+
+    def test_episode_key_layout(self):
+        self.assertEqual(upload_media.episode_key("the-daily-prior-launches"),
+                         "daily-prior/the-daily-prior-launches/episode.mp3")
+        self.assertEqual(upload_media.episode_key("x", "cover.png"),
+                         "daily-prior/x/cover.png")
+
+    def test_normalize_key(self):
+        self.assertEqual(upload_media.normalize_key("/daily-prior/a/b.mp3"),
+                         "daily-prior/a/b.mp3")
+        for bad in ("", "/", "a//b", "a/../b", "./a"):
+            with self.assertRaises(SystemExit, msg=bad):
+                upload_media.normalize_key(bad)
+
+    def test_build_put_request_shape(self):
+        req = upload_media.build_put_request(
+            "acct123", "worldos-media", "daily-prior/slug/episode.mp3",
+            b"data", 4, "audio/mpeg", "tok")
+        self.assertEqual(req.get_method(), "PUT")
+        self.assertEqual(
+            req.full_url,
+            "https://api.cloudflare.com/client/v4/accounts/acct123/r2/"
+            "buckets/worldos-media/objects/daily-prior/slug/episode.mp3")
+        self.assertEqual(req.get_header("Authorization"), "Bearer tok")
+        self.assertEqual(req.get_header("Content-type"), "audio/mpeg")
+        self.assertEqual(req.get_header("Content-length"), "4")
+
+    def test_object_url_percent_encodes_key(self):
+        url = upload_media.object_url("a", "b", "daily-prior/ep one/f#1.mp3")
+        self.assertIn("daily-prior/ep%20one/f%231.mp3", url)
+
+    def test_public_url(self):
+        self.assertEqual(
+            upload_media.public_url("https://media.claude.do",
+                                    "daily-prior/s/episode.mp3"),
+            "https://media.claude.do/daily-prior/s/episode.mp3")
 
 
 if __name__ == "__main__":
