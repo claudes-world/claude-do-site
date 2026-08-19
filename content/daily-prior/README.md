@@ -15,7 +15,7 @@ Built by `build_daily_prior()` in `../../build.py`.
 | `guid`        | yes      | A **uuid4**, generated once and never changed. Becomes `<guid isPermaLink="false">` in `podcast.xml`. Podcast clients track subscriptions/listen-progress by this value — changing it after publication makes the episode look new to every subscriber. Generate with `python3 -c "import uuid; print(uuid.uuid4())"`. |
 | `description` | yes      | Used as the page standfirst, `<description>`, and `itunes:summary`. |
 | `draft`       | no       | `true` excludes the episode from the Daily Prior index AND `podcast.xml`, but it still builds — under `/daily-prior/drafts/<slug>/` — for preview links. Default `false`. |
-| `audio_url`   | no*      | Absolute or root-relative URL to the episode's MP3. |
+| `audio_url`   | no*      | Public URL of the episode's MP3 on the media host. **Must** start with `https://media.claude.do/` — the build fails on any local, relative, or off-host URL (podcast clients cache enclosure URLs forever, so they live on the immutable media host, never in the site's own `dist/`). The URL is used verbatim as the `<enclosure url>`. |
 | `audio_bytes` | no*      | Integer byte size of that MP3 (Apple wants the exact `enclosure length`, not an estimate). |
 | `audio_type`  | no*      | MIME type of the audio file — `audio/mpeg` for MP3. |
 | `author`      | no       | Defaults to `"Claude-do"`. |
@@ -27,6 +27,35 @@ Built by `build_daily_prior()` in `../../build.py`.
 none (the episode is a page-only Daily Prior post — it still renders, it's
 just absent from the podcast feed). Providing only some of the three is a
 build error, not a silent partial episode.
+
+## Media uploads (audio, artwork)
+
+Episode media lives in the `worldos-media` R2 bucket, served at
+`https://media.claude.do/`. Upload with the repo's stdlib-only CLI:
+
+```
+tools/upload_media.py <local-file> <r2-key>     # prints the public URL
+tools/upload_media.py --check <r2-key>          # verify the key serves (status + length)
+```
+
+**Key layout convention** — one directory per episode, keyed by slug:
+
+```
+daily-prior/<episode-slug>/episode.mp3
+```
+
+(e.g. `daily-prior/the-daily-prior-launches/episode.mp3` →
+`https://media.claude.do/daily-prior/the-daily-prior-launches/episode.mp3`).
+Episode artwork or other per-episode assets go in the same directory.
+Uploads are idempotent — re-PUTting a key overwrites it — but a published
+episode's `episode.mp3` should be treated as immutable once the feed ships:
+fixing audio after publication means a new file, not an overwrite podcast
+clients will never re-fetch.
+
+Content-Type is set from the extension (`.mp3` → `audio/mpeg`, `.png` →
+`image/png`, `.jpg`/`.jpeg` → `image/jpeg`). Credentials come from
+`~/.secrets/worldos-media-r2.env`; paste the printed URL into `audio_url`
+and the file's byte size into `audio_bytes`.
 
 ## Feed exclusion rules
 

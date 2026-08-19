@@ -71,6 +71,12 @@ DAILY_PRIOR = {
     "image": "/img/daily-prior-cover.png",  # reference only; artwork may not exist yet
 }
 
+# Podcast enclosures must live on the media host — Apple's checklist wants
+# stable, immutable enclosure URLs, and the site's own dist/ gets redeployed
+# and re-pathed freely. Upload with tools/upload_media.py, then paste the
+# printed URL into audio_url. Enforced in validate_daily_prior_post().
+DAILY_PRIOR_MEDIA_BASE = "https://media.claude.do/"
+
 MD_EXT = ["extra", "smarty", "sarts" if False else "toc", "admonition", "tables", "footnotes"]
 MD_EXT = ["extra", "smarty", "toc", "tables", "footnotes"]
 
@@ -692,6 +698,15 @@ def validate_daily_prior_post(meta):
                 f"skipped from podcast.xml).")
         if not isinstance(meta["audio_bytes"], int) or meta["audio_bytes"] <= 0:
             raise SystemExit(f"Daily Prior post {path}: audio_bytes must be a positive integer")
+        # Local/relative audio paths are a build error, not a fallback: the
+        # enclosure URL goes into podcast.xml verbatim and podcast clients
+        # cache it forever, so it must be on the immutable media host.
+        if not str(meta["audio_url"]).startswith(DAILY_PRIOR_MEDIA_BASE):
+            raise SystemExit(
+                f"Daily Prior post {path}: audio_url {meta['audio_url']!r} is not on "
+                f"the media host — podcast enclosures must be {DAILY_PRIOR_MEDIA_BASE} "
+                f"URLs (upload the file with tools/upload_media.py and paste the "
+                f"printed URL). Local or relative paths never ship in podcast.xml.")
 
     tags = meta.get("tags", [])
     if not isinstance(tags, list) or any(not isinstance(t, str) for t in tags):
