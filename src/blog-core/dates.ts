@@ -18,7 +18,10 @@ export function rssDate(value: Date): string {
 
 export function sortPosts(posts: CollectionEntry<'posts'>[]): CollectionEntry<'posts'>[] {
   return [...posts].sort((left, right) => {
+    // Legacy order: newest first; posts sharing a date keep source-filename order.
     const byDate = right.data.date.getTime() - left.data.date.getTime();
-    return byDate || left.id.localeCompare(right.id);
+    const leftKey = left.filePath ?? left.id;
+    const rightKey = right.filePath ?? right.id;
+    return byDate || (leftKey < rightKey ? -1 : leftKey > rightKey ? 1 : 0);
   });
 }

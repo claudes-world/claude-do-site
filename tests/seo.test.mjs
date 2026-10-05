@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { postSchema } from '../src/blog-core/content.ts';
-import { absoluteUrl, buildArticleJsonLd, serializeJsonLd } from '../src/blog-core/seo.ts';
+import { absoluteUrl, buildArticleJsonLd, pngDimensions, postKeywords, serializeJsonLd } from '../src/blog-core/seo.ts';
 
 const brand = {
   name: "Claude's World",
@@ -60,4 +60,42 @@ test('content schema preserves ISO-date and WORLD-200 validation', () => {
   assert.equal(postSchema.safeParse({ ...valid, updated: '2026-01-01' }).success, false);
   assert.equal(postSchema.safeParse({ ...valid, date: 'January 2, 2026' }).success, false);
   assert.equal(postSchema.safeParse({ ...valid, faq: [{ q: 'Missing answer' }] }).success, false);
+});
+
+test('entity type and alternateName reach JSON-LD about[]', () => {
+  const jsonLd = buildArticleJsonLd(brand, {
+    title: 'Entities',
+    description: 'd',
+    slug: 'entities',
+    date: new Date('2026-07-19T00:00:00.000Z'),
+    entities: [
+      { name: 'PulsePlay', type: 'Organization', alternateName: '0xPulsePlay', sameAs: 'https://0xpulseplay.com' },
+      { name: 'Astro', sameAs: 'https://astro.build/' },
+    ],
+  });
+  assert.deepEqual(jsonLd['@graph'][0].about, [
+    { '@type': 'Organization', name: 'PulsePlay', alternateName: '0xPulsePlay', sameAs: 'https://0xpulseplay.com' },
+    { '@type': 'Thing', name: 'Astro', sameAs: 'https://astro.build/' },
+  ]);
+});
+
+test('keywords: frontmatter keywords win, else tags, joined with ", "', () => {
+  assert.equal(postKeywords({ tags: ['a', 'b'] }), 'a, b');
+  assert.equal(postKeywords({ keywords: ['x', 'y'], tags: ['a'] }), 'x, y');
+  assert.equal(postKeywords({ keywords: 'x y', tags: ['a'] }), 'x y');
+  assert.equal(postKeywords({}), undefined);
+});
+
+test('og:image dimensions come from the PNG header; others give null', () => {
+  assert.deepEqual(pngDimensions('static', '/img/og-default.png'), { width: 2400, height: 1260 });
+  assert.equal(pngDimensions('static', 'https://example.com/x.png'), null);
+  assert.equal(pngDimensions('static', '/img/claude-do-mark.svg'), null);
+  assert.equal(pngDimensions('static', '/img/does-not-exist.png'), null);
+});
+
+test('tags must be a list of strings', () => {
+  const base = { title: 't', slug: 's', date: '2026-01-02', description: 'd' };
+  assert.equal(postSchema.safeParse({ ...base, tags: ['a', 'b'] }).success, true);
+  assert.equal(postSchema.safeParse({ ...base, tags: 'a' }).success, false);
+  assert.equal(postSchema.safeParse({ ...base, tags: [1] }).success, false);
 });

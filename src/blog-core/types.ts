@@ -22,6 +22,8 @@ export interface BrandConfig {
 export interface Entity {
   name: string;
   sameAs: string;
+  type?: string;
+  alternateName?: string;
 }
 
 export interface FaqItem {
@@ -40,4 +42,7 @@ export interface ArticleData {
   og_image?: string;
   entities?: Entity[];
   faq?: FaqItem[];
+  tags?: string[];
+  keywords?: string | string[];
+  section?: string;
 }

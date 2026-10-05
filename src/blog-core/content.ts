@@ -30,7 +30,19 @@ export const postSchema = z
     archive: z.boolean().optional(),
     original_url: z.string().optional(),
     faq: z.array(z.object({ q: z.string(), a: z.string() })).optional(),
-    entities: z.array(z.object({ name: z.string(), sameAs: z.string() })).optional(),
+    entities: z
+      .array(
+        z.object({
+          name: z.string(),
+          sameAs: z.string(),
+          type: z.string().optional(),
+          alternateName: z.string().optional(),
+        }),
+      )
+      .optional(),
+    tags: z.array(z.string(), { error: 'tags must be a list of strings' }).optional(),
+    keywords: z.union([z.string(), z.array(z.string())]).optional(),
+    section: z.string().optional(),
   })
   .superRefine((post, context) => {
     if (post.updated && post.updated < post.date) {
