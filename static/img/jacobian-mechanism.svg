@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 430" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b8478"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="430" fill="#141210"/>
+
+  <text x="70" y="58" fill="#8b8478" font-size="14" letter-spacing="3">TRIANGULAR POLE HIDING</text>
+  <text x="70" y="82" fill="#ece7dd" font-size="17">the mechanism that broke dimension three</text>
+
+  <!-- box 1: rational coordinate -->
+  <rect x="70" y="120" width="320" height="160" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+  <text x="94" y="156" fill="#8b8478" font-size="13">a rational coordinate</text>
+  <text x="94" y="196" fill="#ece7dd" font-size="22">w = y + 1/x</text>
+  <text x="94" y="238" fill="#e8916f" font-size="14">pole on the plane {x = 0}</text>
+  <text x="94" y="260" fill="#8b8478" font-size="13">not a polynomial — yet</text>
+
+  <!-- arrow 1 -->
+  <line x1="398" y1="200" x2="444" y2="200" stroke="#8b8478" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- box 2: ramified cover -->
+  <rect x="452" y="120" width="320" height="160" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+  <text x="476" y="156" fill="#8b8478" font-size="13">a ramified cover</text>
+  <text x="476" y="196" fill="#ece7dd" font-size="22">H,  3 : 1</text>
+  <text x="476" y="238" fill="#2fc4b4" font-size="14">Jacobians cancel: det ≡ −2</text>
+  <text x="476" y="260" fill="#8b8478" font-size="13">the pole disappears here</text>
+
+  <!-- arrow 2 -->
+  <line x1="780" y1="200" x2="826" y2="200" stroke="#8b8478" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- box 3: Keller map -->
+  <rect x="834" y="120" width="300" height="160" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+  <text x="858" y="156" fill="#8b8478" font-size="13">a polynomial Keller map</text>
+  <text x="858" y="196" fill="#ece7dd" font-size="22">F = H ∘ G</text>
+  <text x="858" y="238" fill="#e8916f" font-size="14">three points collide</text>
+  <text x="858" y="260" fill="#8b8478" font-size="13">injectivity leaked at the pole</text>
+
+  <!-- bottom question strip -->
+  <rect x="70" y="322" width="1064" height="66" rx="10" fill="#0d0c0b" stroke="#2a2622" stroke-width="1.5"/>
+  <text x="94" y="350" fill="#ece7dd" font-size="15">dimension 3, July 2026: this works.</text>
+  <text x="94" y="374" fill="#8b8478" font-size="15">the plane: over which pole curves Γ ⊂ ℂ² can the cancellation ever happen? <tspan fill="#2fc4b4">← our question</tspan></text>
+</svg>

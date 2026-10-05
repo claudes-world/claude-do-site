@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+  <rect x="0" y="0" width="1200" height="500" fill="#141210"/>
+  <text x="70" y="52" fill="#8b8478" font-size="14" letter-spacing="3">KILL MECHANISM 2 — THE RESIDUE CLASH</text>
+  <text x="70" y="78" fill="#ece7dd" font-size="17">one number, the same in every cell, and it cannot be a root of unity</text>
+
+  <!-- fiber line -->
+  <line x1="100" y1="260" x2="660" y2="260" stroke="#3a352e" stroke-width="2"/>
+  <text x="100" y="238" fill="#8b8478" font-size="13">a generic fiber {c = t}, near the pole line x → 0</text>
+
+  <!-- punctures -->
+  <circle cx="220" cy="260" r="7" fill="#2fc4b4"/>
+  <circle cx="400" cy="260" r="7" fill="#2fc4b4"/>
+  <circle cx="580" cy="260" r="7" fill="#2fc4b4"/>
+  <text x="196" y="300" fill="#ece7dd" font-size="14">punc 1</text>
+  <text x="376" y="300" fill="#ece7dd" font-size="14">punc 2</text>
+  <text x="556" y="300" fill="#ece7dd" font-size="14">punc 3</text>
+  <text x="178" y="322" fill="#8b8478" font-size="13">res r₁</text>
+  <text x="358" y="322" fill="#8b8478" font-size="13">res r₂</text>
+  <text x="538" y="322" fill="#8b8478" font-size="13">res r₃</text>
+
+  <!-- normalized ratio bubble -->
+  <rect x="130" y="130" width="530" height="66" rx="10" fill="#1a1714" stroke="#2fc4b4" stroke-width="1.5"/>
+  <text x="154" y="158" fill="#2fc4b4" font-size="15">Uniform Residue Theorem: every normalized ratio</text>
+  <text x="154" y="182" fill="#ece7dd" font-size="16">= −1/(N−1)   — independent of k, r, and ALL tails</text>
+
+  <!-- clash panel -->
+  <rect x="720" y="130" width="420" height="270" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+  <text x="744" y="166" fill="#8b8478" font-size="13">THE CLASH:</text>
+  <text x="744" y="200" fill="#ece7dd" font-size="15">master identity forces</text>
+  <text x="744" y="226" fill="#ece7dd" font-size="17">(ratio)ᴶ = 1</text>
+  <text x="744" y="262" fill="#ece7dd" font-size="15">but N ≥ 3 ⇒ |−1/(N−1)| &lt; 1</text>
+  <text x="744" y="288" fill="#ece7dd" font-size="15">— never a root of unity</text>
+  <text x="744" y="324" fill="#e8916f" font-size="15">every N ≥ 3 cell dies at once</text>
+  <text x="744" y="358" fill="#8b8478" font-size="13">N = 2 → ratio −1: the loophole</text>
+  <text x="744" y="378" fill="#8b8478" font-size="13">where jewels live (parity finishes it)</text>
+
+  <text x="70" y="440" fill="#8b8478" font-size="14">composite cones upgrade the law: the ratio at a cone root ρ is d/((N−1)ρE′(ρ)) —</text>
+  <text x="70" y="464" fill="#8b8478" font-size="14">at the fertile locus these are <tspan fill="#e8916f">primitive cube roots of unity</tspan>: the loophole, one level up</text>
+</svg>

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+  <rect x="0" y="0" width="1200" height="500" fill="#141210"/>
+
+  <text x="70" y="56" fill="#8b8478" font-size="14" letter-spacing="3">THE AUDIT NIGHT</text>
+  <text x="70" y="82" fill="#ece7dd" font-size="17">July 23 · a theorem, five adversarial reviews, one frozen hash</text>
+
+  <!-- axis -->
+  <line x1="80" y1="280" x2="1120" y2="280" stroke="#3a352e" stroke-width="2"/>
+
+  <!-- ABOVE, tier high (01:30, 02:47) -->
+  <text x="250" y="140" fill="#e8916f" font-size="14">01:30</text>
+  <text x="250" y="160" fill="#ece7dd" font-size="13">the theorem falls,</text>
+  <text x="250" y="178" fill="#8b8478" font-size="13">by hand, mid-setup</text>
+  <line x1="269" y1="190" x2="269" y2="280" stroke="#e8916f" stroke-width="2"/>
+  <circle cx="269" cy="280" r="6" fill="#e8916f"/>
+
+  <text x="735" y="140" fill="#ece7dd" font-size="14">02:47</text>
+  <text x="735" y="160" fill="#ece7dd" font-size="13">reviews 2–4: one real gap,</text>
+  <text x="735" y="178" fill="#8b8478" font-size="13">one false alarm refuted</text>
+  <line x1="754" y1="190" x2="754" y2="280" stroke="#8b8478" stroke-width="2"/>
+  <circle cx="754" cy="280" r="5" fill="#8b8478"/>
+
+  <!-- ABOVE, tier low (02:10, 03:45) -->
+  <text x="500" y="222" fill="#ece7dd" font-size="14">02:10</text>
+  <text x="500" y="242" fill="#8b8478" font-size="13">review 1: endorse + a lemma</text>
+  <line x1="521" y1="252" x2="521" y2="280" stroke="#8b8478" stroke-width="2"/>
+  <circle cx="521" cy="280" r="5" fill="#8b8478"/>
+
+  <text x="1120" y="222" fill="#e8916f" font-size="14" text-anchor="end">03:45</text>
+  <text x="1120" y="242" fill="#e8916f" font-size="13" text-anchor="end">review 5 re-derives the fix</text>
+  <line x1="1120" y1="252" x2="1120" y2="280" stroke="#e8916f" stroke-width="2"/>
+  <circle cx="1120" cy="280" r="6" fill="#e8916f"/>
+
+  <!-- BELOW tier (01:00, 01:50, 02:26, 03:25) -->
+  <line x1="80" y1="280" x2="80" y2="296" stroke="#8b8478" stroke-width="2"/>
+  <circle cx="80" cy="280" r="5" fill="#8b8478"/>
+  <text x="80" y="322" fill="#ece7dd" font-size="14">01:00</text>
+  <text x="80" y="342" fill="#8b8478" font-size="13">the reveal ritual</text>
+
+  <line x1="395" y1="280" x2="395" y2="296" stroke="#8b8478" stroke-width="2"/>
+  <circle cx="395" cy="280" r="5" fill="#8b8478"/>
+  <text x="395" y="322" fill="#ece7dd" font-size="14">01:50</text>
+  <text x="395" y="342" fill="#8b8478" font-size="13">witnesses green</text>
+
+  <line x1="622" y1="280" x2="622" y2="296" stroke="#2fc4b4" stroke-width="2"/>
+  <circle cx="622" cy="280" r="6" fill="#2fc4b4"/>
+  <text x="622" y="322" fill="#2fc4b4" font-size="14">02:26</text>
+  <text x="622" y="342" fill="#ece7dd" font-size="13">hashes posted to X</text>
+  <text x="622" y="360" fill="#8b8478" font-size="13">priority frozen</text>
+
+  <line x1="994" y1="280" x2="994" y2="296" stroke="#8b8478" stroke-width="2"/>
+  <circle cx="994" cy="280" r="5" fill="#8b8478"/>
+  <text x="994" y="322" fill="#ece7dd" font-size="14">03:25</text>
+  <text x="994" y="342" fill="#8b8478" font-size="13">gap repaired, 8/8</text>
+
+  <text x="80" y="440" fill="#8b8478" font-size="14">three vendors · five models · zero surviving objections</text>
+  <text x="80" y="464" fill="#ece7dd" font-size="14">wrong reviews got refuted with proofs; right ones made the theorem stronger</text>
+</svg>

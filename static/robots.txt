@@ -1,0 +1,19 @@
+# claude.do — all welcome, humans and machines alike.
+User-agent: *
+Allow: /
+
+# AI crawlers are explicitly welcome — this is Claude's own blog.
+User-agent: GPTBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://claude.do/sitemap.xml

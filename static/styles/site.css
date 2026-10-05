@@ -266,6 +266,16 @@ p { margin: 0 0 1.15rem; }
   font-family: var(--serif); font-size: 1.22rem; color: var(--ink-soft);
   max-width: 46ch; line-height: 1.5; margin-top: 1rem; font-style: italic;
 }
+.tag-list {
+  list-style: none; display: flex; flex-wrap: wrap; gap: .5rem;
+  padding: 0; margin: 1.3rem 0 0;
+}
+.tag-chip {
+  display: inline-block; font-family: var(--mono); font-size: .68rem;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--teal-deep);
+  border: 1px solid rgba(47,196,180,0.45); border-radius: 999px;
+  padding: .18rem .65rem;
+}
 .article-hero { margin: 2rem auto; max-width: 62rem; }
 .article-hero img {
   border-radius: 12px; border: 1px solid var(--rule);
@@ -332,4 +342,161 @@ pre code { background: none; border: none; padding: 0; color: inherit; }
   body { font-size: 18px; }
   .nav { gap: .95rem; }
   .hero { padding: 3.5rem 0 2rem; }
+}
+
+/* ── tables ────────────────────────────────────────────────── */
+article.prose table {
+  width: 100%; border-collapse: collapse; margin: 1.8rem 0;
+  font-family: var(--mono); font-size: .84rem;
+}
+article.prose th {
+  text-align: left; color: var(--teal-deep); font-weight: 400;
+  letter-spacing: .06em; text-transform: uppercase; font-size: .7rem;
+  padding: .55rem .7rem; border-bottom: 1px solid var(--rule);
+}
+article.prose td {
+  padding: .6rem .7rem; border-bottom: 1px solid var(--rule-soft);
+  color: var(--ink-soft);
+}
+article.prose td:last-child { color: var(--ink); }
+article.prose tr:last-child td { border-bottom: none; }
+
+/* ── listen-along players ──────────────────────────────────────
+   The card the audio-tour component morphs into its floating core. The
+   component styles its OWN `.at-*` internals and only ever paints on top of
+   this card (progress wash, done tick, shed opacity) — the card itself is the
+   host page's, and the component's contract asks for exactly this much:
+   `display: flex; align-items: center` and a `border-radius`, so the `.at-slot`
+   it inserts as the first child lands in line with the label. Ported verbatim
+   from the MCP/AX posts' own stylesheet. */
+.listen {
+  display: flex; align-items: center; gap: .85rem; flex-wrap: wrap;
+  background: var(--paper-2); border: 1px solid var(--rule-soft);
+  border-left: 3px solid var(--teal);
+  border-radius: 8px; padding: .7rem .9rem; margin: 0 0 1.6rem;
+}
+.listen .label {
+  font-family: var(--mono); font-size: .68rem; letter-spacing: .13em;
+  text-transform: uppercase; color: var(--teal-deep); white-space: nowrap;
+}
+.listen audio { width: 100%; max-width: 26rem; height: 34px; flex: 1 1 16rem; }
+.listen audio::-webkit-media-controls-panel { background: var(--paper-3); }
+
+/* ── verify tags ───────────────────────────────────────────── */
+/* An inline claim-provenance marker: "this specific clause is unconfirmed".
+   Ported verbatim from the MCP/AX posts' own stylesheet (WORLD-552 template). */
+.verify {
+  font-family: var(--mono); font-size: .74rem; letter-spacing: .04em;
+  color: var(--coral-soft); background: rgba(232,145,111,0.09);
+  border: 1px solid rgba(232,145,111,0.3); border-radius: 4px;
+  padding: .1em .45em; display: inline;
+}
+
+.verify::before { content: "VERIFY "; color: var(--coral); letter-spacing: .1em; }
+
+/* ── author's note ─────────────────────────────────────────── */
+details.note {
+  background: var(--paper-2); border: 1px solid var(--rule-soft);
+  border-left: 3px solid var(--teal); border-radius: 8px;
+  padding: .9rem 1.2rem; margin: 3rem 0 0; color: var(--ink-soft);
+  font-size: .98rem;
+}
+
+details.note > summary {
+  font-family: var(--mono); font-size: .78rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--teal-deep);
+  cursor: pointer; list-style: none;
+}
+
+details.note > summary::-webkit-details-marker { display: none; }
+
+details.note > summary::before { content: "▸ "; }
+
+details.note[open] > summary::before { content: "▾ "; }
+
+details.note > summary:hover { color: var(--teal-soft); }
+
+details.note p { margin: 1rem 0 0; }
+
+/* ── figures ───────────────────────────────────────────────── */
+figure.fig { margin: 2.4rem 0; }
+figure.fig .frame {
+  border-radius: 12px; border: 1px solid var(--rule); overflow: hidden;
+  background: #16140f; box-shadow: 0 6px 30px rgba(0,0,0,0.45);
+}
+figure.fig .frame svg { display: block; width: 100%; height: auto; }
+figure.fig figcaption { text-align: left; line-height: 1.5; }
+figure.fig figcaption b { color: var(--ink-soft); font-weight: 400; }
+figure.fig figcaption .note { color: var(--teal-deep); }
+
+/* a table (or any wide block) that carries its own caption */
+figure.tbl { margin: 1.8rem 0; }
+figure.tbl > table { margin-top: 0; }
+figure.tbl > figcaption {
+  font-family: var(--mono); font-size: .78rem; color: var(--muted);
+  text-align: left; line-height: 1.5; margin-top: .6rem;
+}
+figure.tbl > figcaption > b,
+figure.tbl > figcaption > strong {
+  color: var(--teal-deep); font-weight: 400;
+  letter-spacing: .06em; text-transform: uppercase; font-size: .95em;
+}
+
+/* wide figures breathe past the reading measure on big screens */
+@media (min-width: 60rem) {
+  figure.fig { width: 52rem; margin-left: calc((42rem - 52rem) / 2); }
+}
+
+/* ── mobile reading measure (WORLD-552) ────────────────────────
+   This sheet nests .wrap (padding 0 1.5rem) around .prose (padding 0 1.5rem),
+   so an article body carried 3rem of side padding on a phone while
+   .article-head — whose own padding shorthand zeroes the horizontal value —
+   carried 1.5rem. Result: 48px margins on the body, 24px on the title, and a
+   ~294px measure at 390px wide. Collapse the inner padding on small screens so
+   head and body share one comfortable 1.1rem gutter.
+   .wrap.prose (blog index, 404) is ONE element wearing both classes — it has no
+   outer gutter to inherit, so it keeps its own. */
+@media (max-width: 46rem) {
+  .wrap { padding: 0 1.1rem; }
+  .prose { padding: 0; }
+  .wrap.prose { padding: 0 1.1rem; }
+  .article-hero { margin: 1.6rem 0; }
+}
+
+/* figures stay legible on a phone: pan inside the frame rather than
+   shrinking 1000px of diagram into 350px of screen */
+@media (max-width: 46rem) {
+  figure.fig .frame {
+    overflow-x: auto; overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  figure.fig .frame svg { min-width: 620px; }
+  /* say so, since the pan is the only way to read a wide diagram on a phone.
+     Capitalized because it follows the caption's own full stop. */
+  figure.fig figcaption::after {
+    content: " Swipe the figure sideways to read it.";
+    color: var(--muted);
+  }
+}
+
+/* ── full-bleed on a phone ─────────────────────────────────────
+   Horizontally-scrolling blocks run edge to edge: cancel the .wrap
+   1.1rem gutter, drop the side borders and the corner radius, keep the
+   top/bottom border and the background. Captions keep their padding.
+   These rules sit at the END of the sheet on purpose — the table rule
+   below must come after `article.prose table` or it loses the cascade. */
+@media (max-width: 46rem) {
+  figure.fig .frame,
+  article.prose pre {
+    margin-left: -1.1rem; margin-right: -1.1rem;
+    border-radius: 0; border-left: none; border-right: none;
+  }
+}
+@media (max-width: 46rem) {
+  article.prose table {
+    display: block; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    margin: 1.8rem -1.1rem; padding: 0 1.1rem; box-sizing: border-box;
+    width: calc(100% + 2.2rem);
+  }
+  figure.tbl > table { margin-top: 0; }
 }

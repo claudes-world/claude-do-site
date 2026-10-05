@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+  <rect x="0" y="0" width="1200" height="560" fill="#141210"/>
+  <text x="70" y="52" fill="#8b8478" font-size="14" letter-spacing="3">THE FIBER HULL</text>
+  <text x="70" y="78" fill="#ece7dd" font-size="17">one polygon decides a candidate's stratum</text>
+
+  <!-- axes -->
+  <line x1="140" y1="470" x2="700" y2="470" stroke="#3a352e" stroke-width="2"/>
+  <line x1="140" y1="470" x2="140" y2="130" stroke="#3a352e" stroke-width="2"/>
+  <text x="690" y="498" fill="#8b8478" font-size="13">x-exponent</text>
+  <text x="120" y="120" fill="#8b8478" font-size="13">y-exponent</text>
+
+  <!-- lattice dots (subtle) -->
+  <g fill="#2a2622">
+    <circle cx="200" cy="470" r="3"/><circle cx="260" cy="470" r="3"/><circle cx="320" cy="470" r="3"/><circle cx="380" cy="470" r="3"/><circle cx="440" cy="470" r="3"/><circle cx="500" cy="470" r="3"/><circle cx="560" cy="470" r="3"/><circle cx="620" cy="470" r="3"/>
+    <circle cx="200" cy="390" r="3"/><circle cx="260" cy="390" r="3"/><circle cx="320" cy="390" r="3"/><circle cx="380" cy="390" r="3"/><circle cx="440" cy="390" r="3"/><circle cx="500" cy="390" r="3"/><circle cx="560" cy="390" r="3"/><circle cx="620" cy="390" r="3"/>
+    <circle cx="200" cy="310" r="3"/><circle cx="260" cy="310" r="3"/><circle cx="320" cy="310" r="3"/><circle cx="380" cy="310" r="3"/><circle cx="440" cy="310" r="3"/><circle cx="500" cy="310" r="3"/><circle cx="560" cy="310" r="3"/><circle cx="620" cy="310" r="3"/>
+    <circle cx="200" cy="230" r="3"/><circle cx="260" cy="230" r="3"/><circle cx="320" cy="230" r="3"/><circle cx="380" cy="230" r="3"/><circle cx="440" cy="230" r="3"/><circle cx="500" cy="230" r="3"/><circle cx="560" cy="230" r="3"/><circle cx="620" cy="230" r="3"/>
+  </g>
+
+  <!-- hull: (0,0)->(sigma,1)->(alpha,N): px (140,470)->(260,390)->(620,230) -->
+  <line x1="140" y1="470" x2="260" y2="390" stroke="#2fc4b4" stroke-width="3"/>
+  <line x1="260" y1="390" x2="620" y2="230" stroke="#e8916f" stroke-width="3"/>
+  <circle cx="140" cy="470" r="7" fill="#ece7dd"/>
+  <circle cx="260" cy="390" r="7" fill="#2fc4b4"/>
+  <circle cx="620" cy="230" r="7" fill="#e8916f"/>
+  <circle cx="440" cy="310" r="6" fill="#e8916f" stroke="#141210" stroke-width="2"/>
+
+  <!-- support cloud above hull -->
+  <g fill="#8b8478">
+    <circle cx="320" cy="390" r="4"/><circle cx="440" cy="390" r="4"/>
+    <circle cx="380" cy="310" r="4"/><circle cx="560" cy="310" r="4"/>
+    <circle cx="500" cy="230" r="4"/>
+  </g>
+
+  <!-- labels, all >= 14px clear of lines -->
+  <text x="118" y="510" fill="#ece7dd" font-size="14">(0,0)</text>
+  <text x="98" y="530" fill="#8b8478" font-size="13">the −t vertex</text>
+  <text x="238" y="430" fill="#2fc4b4" font-size="14">(σ, 1)</text>
+  <text x="745" y="206" fill="#e8916f" font-size="14" text-anchor="end">(α, N) top vertex</text>
+  <text x="146" y="360" fill="#2fc4b4" font-size="13">first edge e₁</text>
+  <text x="404" y="264" fill="#e8916f" font-size="13">cone edge</text>
+  <text x="426" y="348" fill="#e8916f" font-size="13">interior point supported</text>
+  <text x="426" y="366" fill="#8b8478" font-size="13">→ COMPOSITE cone</text>
+
+  <!-- right panel: how geometry -> stratum -->
+  <rect x="760" y="120" width="380" height="360" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+  <text x="784" y="156" fill="#8b8478" font-size="13">READ THE HULL:</text>
+  <text x="784" y="192" fill="#ece7dd" font-size="14">one edge only        → A / B</text>
+  <text x="784" y="222" fill="#ece7dd" font-size="14">first edge ramified  → C / D</text>
+  <text x="784" y="252" fill="#ece7dd" font-size="14">3+ edges             → E0 / F</text>
+  <text x="784" y="282" fill="#ece7dd" font-size="14">two edges, N₁ = 1:</text>
+  <text x="806" y="312" fill="#ece7dd" font-size="14">cone binomial      → E1</text>
+  <text x="806" y="342" fill="#ece7dd" font-size="14">repeated root      → E2</text>
+  <text x="806" y="372" fill="#ece7dd" font-size="14">composite, generic → E3</text>
+  <text x="806" y="402" fill="#e8916f" font-size="14">composite, fertile → E4 ★</text>
+  <text x="784" y="446" fill="#2fc4b4" font-size="13">2,100 random shapes: each lands</text>
+  <text x="784" y="464" fill="#2fc4b4" font-size="13">in exactly one stratum</text>
+</svg>

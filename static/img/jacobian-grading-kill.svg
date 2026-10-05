@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+  <defs>
+    <marker id="arrC" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#e8916f"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="520" fill="#141210"/>
+  <text x="70" y="52" fill="#8b8478" font-size="14" letter-spacing="3">KILL MECHANISM 1 — THE GRADING</text>
+  <text x="70" y="78" fill="#ece7dd" font-size="17">the top-vertex bracket L₀ is diagonal, and it can never come home</text>
+
+  <!-- axes -->
+  <line x1="130" y1="430" x2="640" y2="430" stroke="#3a352e" stroke-width="2"/>
+  <line x1="130" y1="430" x2="130" y2="120" stroke="#3a352e" stroke-width="2"/>
+
+  <!-- omega = 0 line through origin and top vertex -->
+  <line x1="130" y1="430" x2="610" y2="150" stroke="#2fc4b4" stroke-width="2" stroke-dasharray="7 6"/>
+  <text x="514" y="130" fill="#2fc4b4" font-size="13">ω = 0 line (origin → top vertex)</text>
+  <circle cx="610" cy="150" r="7" fill="#2fc4b4"/>
+  <text x="630" y="158" fill="#ece7dd" font-size="14">b·xᵅyᴺ</text>
+
+  <!-- support dots strictly right of the line: omega > 0 -->
+  <g fill="#ece7dd">
+    <circle cx="260" cy="400" r="5"/>
+    <circle cx="360" cy="350" r="5"/>
+    <circle cx="450" cy="310" r="5"/>
+  </g>
+  <text x="292" y="420" fill="#8b8478" font-size="13">every other monomial: ω &gt; 0</text>
+
+  <!-- diagonal operator arrows: parallel, shifting up by N-1 -->
+  <line x1="262" y1="392" x2="298" y2="350" stroke="#e8916f" stroke-width="2" marker-end="url(#arrC)"/>
+  <line x1="362" y1="342" x2="398" y2="300" stroke="#e8916f" stroke-width="2" marker-end="url(#arrC)"/>
+  <line x1="452" y1="302" x2="488" y2="260" stroke="#e8916f" stroke-width="2" marker-end="url(#arrC)"/>
+  <text x="470" y="336" fill="#e8916f" font-size="13">L₀: eigenvalue ∝ ω,</text>
+  <text x="470" y="356" fill="#e8916f" font-size="13">y-degree jumps by N−1</text>
+
+  <!-- the forbidden target row -->
+  <rect x="130" y="440" width="1010" height="26" rx="6" fill="#0d0c0b" stroke="#e8916f" stroke-width="1.5"/>
+  <text x="146" y="458" fill="#e8916f" font-size="13">the pair equation needs y-FREE output on this row — L₀'s outputs, shifted up by N−1, can never land here</text>
+
+  <!-- right panel: the punchline -->
+  <rect x="720" y="150" width="420" height="250" rx="10" fill="#1a1714" stroke="#3a352e" stroke-width="1.5"/>
+  <text x="744" y="188" fill="#8b8478" font-size="13">CONSEQUENCE (one page, five audits):</text>
+  <text x="744" y="226" fill="#ece7dd" font-size="15">for strict-collapse shapes,</text>
+  <text x="744" y="254" fill="#ece7dd" font-size="17">J(w, c) ∉ ℂ[x, 1/x]</text>
+  <text x="744" y="288" fill="#ece7dd" font-size="15">no pair exists — for ANY</text>
+  <text x="744" y="314" fill="#ece7dd" font-size="15">exponent m ∈ ℤ, zero included</text>
+  <text x="744" y="356" fill="#8b8478" font-size="13">strata B and C close wholesale;</text>
+  <text x="744" y="376" fill="#8b8478" font-size="13">the ramified variant is verbatim</text>
+</svg>
