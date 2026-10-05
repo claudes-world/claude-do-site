@@ -105,6 +105,76 @@ function articleText(html) {
   ).replace(/\s+/g, ' ').trim();
 }
 
+function stripInert(html) {
+  return html
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gi, (match) => match.replace(/>[\s\S]*<\/script>$/i, '></script>'))
+    .replace(/<style\b[\s\S]*?<\/style>/gi, ' ');
+}
+
+// Every visible character on the page (header, article head, tag chips, hero
+// caption, body, FAQ, footer), not only the <article> body.
+function pageText(html) {
+  const body = html.match(/<body\b[^>]*>([\s\S]*)<\/body>/i)?.[1] ?? html;
+  return decodeEntities(
+    stripInert(body)
+      .replace(/<script\b[\s\S]*?<\/script>/gi, ' ')
+      .replace(/<[^>]+>/g, ' '),
+  ).replace(/\s+/g, ' ').trim();
+}
+
+// Ordered element ids (in-page anchor targets) plus every src/href/poster and
+// data-* attribute, head included: stylesheets, scripts, images, audio and
+// video sources, audio-tour section markers, in-page links.
+const REFERENCE_ATTRIBUTE = /^(?:src|href|poster|id|class|style|alt|title|data-[\w-]+)$/;
+function pageReferences(html) {
+  const references = [];
+  for (const match of stripInert(html).matchAll(/<([a-zA-Z][\w-]*)\b([^>]*)>/g)) {
+    const tag = match[1].toLowerCase();
+    if (tag === 'meta') continue;
+    const attributes = parseAttributes(match[0]);
+    for (const name of Object.keys(attributes).sort()) {
+      if (REFERENCE_ATTRIBUTE.test(name)) references.push(`${tag}[${name}]=${attributes[name]}`);
+    }
+  }
+  return references;
+}
+
+// Ordered element names in <body> (script/style bodies and comments ignored).
+// Reported, not gated: python-markdown and remark can nest inline emphasis
+// differently while the visible text stays identical.
+function elementSequence(html) {
+  const body = html.match(/<body\b[^>]*>([\s\S]*)<\/body>/i)?.[1] ?? html;
+  return [...stripInert(body).matchAll(/<([a-zA-Z][\w-]*)\b/g)]
+    .map((match) => match[1].toLowerCase())
+    .filter((tag) => tag !== 'tbody');
+}
+
+function sequenceDifference(path, oldList, newList) {
+  let index = 0;
+  while (index < oldList.length && oldList[index] === newList[index]) index += 1;
+  return {
+    path,
+    oldCount: oldList.length,
+    newCount: newList.length,
+    legacy: oldList.slice(Math.max(0, index - 3), index + 6).join(' '),
+    astro: newList.slice(Math.max(0, index - 3), index + 6).join(' '),
+  };
+}
+
+function listDifference(path, oldList, newList) {
+  const oldCounts = new Map();
+  for (const value of oldList) oldCounts.set(value, (oldCounts.get(value) ?? 0) + 1);
+  const added = [];
+  for (const value of newList) {
+    const count = oldCounts.get(value) ?? 0;
+    if (count > 0) oldCounts.set(value, count - 1);
+    else added.push(value);
+  }
+  const removed = [...oldCounts].flatMap(([value, count]) => Array(count).fill(value));
+  return { path, removed, added, reordered: removed.length === 0 && added.length === 0 };
+}
+
 function sitemap(xml) {
   return [...xml.matchAll(/<url>\s*<loc>([\s\S]*?)<\/loc>(?:\s*<lastmod>([\s\S]*?)<\/lastmod>)?\s*<\/url>/g)]
     .map((match) => ({ loc: decodeEntities(match[1]), ...(match[2] ? { lastmod: decodeEntities(match[2]) } : {}) }))
@@ -175,6 +245,9 @@ const common = oldFiles.filter((path) => newSet.has(path));
 const seoChanges = [];
 const jsonLdChanges = [];
 const articleTextChanges = [];
+const pageTextChanges = [];
+const referenceChanges = [];
+const structureChanges = [];
 const assetChanges = [];
 const sizeChanges = [];
 
@@ -198,6 +271,15 @@ for (const path of common) {
     const oldArticle = articleText(oldHtml);
     const newArticle = articleText(newHtml);
     if (oldArticle !== newArticle) articleTextChanges.push(textDifference(path, oldArticle ?? '', newArticle ?? ''));
+    const oldPage = pageText(oldHtml);
+    const newPage = pageText(newHtml);
+    if (oldPage !== newPage) pageTextChanges.push(textDifference(path, oldPage, newPage));
+    const oldReferences = pageReferences(oldHtml);
+    const newReferences = pageReferences(newHtml);
+    if (!equal(oldReferences, newReferences)) referenceChanges.push(listDifference(path, oldReferences, newReferences));
+    const oldSequence = elementSequence(oldHtml);
+    const newSequence = elementSequence(newHtml);
+    if (!equal(oldSequence, newSequence)) structureChanges.push(sequenceDifference(path, oldSequence, newSequence));
   } else if (!path.endsWith('.xml') && hash(oldBuffer) !== hash(newBuffer)) {
     assetChanges.push(path);
   }
@@ -218,6 +300,8 @@ const failures = [
   seoChanges.length > 0,
   jsonLdChanges.length > 0,
   articleTextChanges.length > 0,
+  pageTextChanges.length > 0,
+  referenceChanges.length > 0,
   assetChanges.length > 0,
   sitemapChanged,
   rssChanged,
@@ -245,9 +329,11 @@ Candidate: Astro static build
 | Sitemap semantics | ${sitemapChanged ? 'FAIL' : 'PASS'} | ${oldSitemap.length} legacy URLs; ${newSitemap.length} Astro URLs |
 | RSS semantics | ${rssChanged ? 'FAIL' : 'PASS'} | ${oldRss.items.length} legacy items; ${newRss.items.length} Astro items |
 | Visible article text | ${articleTextChanges.length === 0 ? 'PASS' : 'FAIL'} | ${articleTextChanges.length} posts changed after whitespace normalization |
+| Visible page text (whole body) | ${pageTextChanges.length === 0 ? 'PASS' : 'FAIL'} | ${pageTextChanges.length} pages changed after whitespace normalization |
+| Links, sources, ids, classes, styles, alt/title, data attributes | ${referenceChanges.length === 0 ? 'PASS' : 'FAIL'} | ${referenceChanges.length} pages changed |
 | Static asset bytes | ${assetChanges.length === 0 ? 'PASS' : 'FAIL'} | ${assetChanges.length} common non-HTML/XML files changed |
 
-The URL gate compares every emitted file path, including HTML routes, feeds, CSS, images, and media. HTML formatting may differ; SEO fields and parsed structured data must not. JSON object key order is ignored, while graph/FAQ/breadcrumb array order remains significant.
+The URL gate compares every emitted file path, including HTML routes, feeds, CSS, images, and media. HTML formatting may differ; SEO fields, parsed structured data, visible text, and every src/href/poster/id/class/style/alt/title/data-* attribute (in document order) must not. JSON object key order is ignored, while graph/FAQ/breadcrumb array order remains significant.
 
 ## URL set diff
 
@@ -278,6 +364,18 @@ ${rssChanged ? jsonDetails([{ path: 'rss.xml', oldValue: oldRss, newValue: newRs
 ## Visible article-text changes
 
 ${articleTextChanges.length ? articleTextChanges.map(({ path, oldExcerpt, newExcerpt }) => `- \`${path}\`\n  - Legacy: \`${oldExcerpt}\`\n  - Astro: \`${newExcerpt}\``).join('\n') : 'None.'}
+
+## Visible page-text changes
+
+${pageTextChanges.length ? pageTextChanges.map(({ path, oldExcerpt, newExcerpt }) => `- \`${path}\`\n  - Legacy: \`${oldExcerpt}\`\n  - Astro: \`${newExcerpt}\``).join('\n') : 'None.'}
+
+## Link, source, id, class, style, alt, title and data-attribute changes
+
+${referenceChanges.length ? referenceChanges.map(({ path, removed, added, reordered }) => `- \`${path}\`${reordered ? ' (same set, different order)' : ''}${removed.length ? `\n  - Only in legacy (${removed.length}): ${removed.slice(0, 12).map((value) => `\`${value}\``).join(', ')}` : ''}${added.length ? `\n  - Only in Astro (${added.length}): ${added.slice(0, 12).map((value) => `\`${value}\``).join(', ')}` : ''}`).join('\n') : 'None.'}
+
+## Element structure (informational, not gated)
+
+${structureChanges.length ? structureChanges.map(({ path, oldCount, newCount, legacy, astro }) => `- \`${path}\` (${oldCount} legacy elements, ${newCount} Astro elements); first difference:\n  - Legacy: \`${legacy}\`\n  - Astro: \`${astro}\``).join('\n') : 'Every page has the same ordered element sequence.'}
 
 ## Static asset byte changes
 
