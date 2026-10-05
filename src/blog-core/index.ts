@@ -5,3 +5,4 @@ export * from './feeds';
 export * from './seo';
 export * from './types';
 export * from './audio-tour';
+export * from './markdown';
