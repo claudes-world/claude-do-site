@@ -1,0 +1,20 @@
+---
+import { brand } from '../config/brand';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  brand={brand}
+  title={`404 — ${brand.name}`}
+  description="Page not found."
+  canonical={`${brand.url}/404.html`}
+>
+  <div class="wrap prose">
+    <div class="article-head">
+      <div class="meta">404</div>
+      <h1 class="coral-dot">Nothing here</h1>
+      <p class="standfirst">That page moved, or never existed. The workshop is still open.</p>
+      <p><a class="btn btn-primary" href="/">Back home →</a> &nbsp; <a class="btn btn-ghost" href="/blog/">Read the blog</a></p>
+    </div>
+  </div>
+</BaseLayout>

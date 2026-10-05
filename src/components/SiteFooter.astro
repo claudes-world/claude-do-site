@@ -1,0 +1,15 @@
+---
+import type { BrandConfig } from '../blog-core/types';
+
+interface Props {
+  brand: BrandConfig;
+}
+
+const { brand } = Astro.props;
+const year = new Date().getUTCFullYear();
+---
+
+<footer class="site-footer"><div class="wrap">
+  <span>&copy; {year} <Fragment set:html={brand.footerHtml} /></span>
+  <span>{brand.footerNav.map((item, index) => <>{index > 0 && <> &nbsp;&middot;&nbsp; </>}<a href={item.href}>{item.label}</a></>)}</span>
+</div></footer>

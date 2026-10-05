@@ -1,0 +1,16 @@
+---
+import type { BrandConfig } from '../blog-core/types';
+
+interface Props {
+  brand: BrandConfig;
+}
+
+const { brand } = Astro.props;
+---
+
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="/"><Fragment set:html={brand.wordmarkHtml} /></a>
+  <nav class="nav">
+    {brand.nav.map((item) => <a href={item.href}>{item.label}</a>)}
+  </nav>
+</div></header>

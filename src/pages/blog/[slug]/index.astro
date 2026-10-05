@@ -1,0 +1,73 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Faq from '../../../components/Faq.astro';
+import { humanDate, sortPosts } from '../../../blog-core/dates';
+import { AUDIO_TOUR_CSS, AUDIO_TOUR_SCRIPT, audioFilesFor, wrapAudioSections } from '../../../blog-core/audio-tour';
+import { buildArticleJsonLd, postCanonical, postKeywords } from '../../../blog-core/seo';
+import { brand } from '../../../config/brand';
+import { AUDIO_DIR } from '../../../config/paths';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = sortPosts(await getCollection('posts'));
+  return posts.map((post) => ({ params: { slug: post.data.slug }, props: { post } }));
+}
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const canonical = postCanonical(brand, post.data.slug);
+const jsonLd = buildArticleJsonLd(brand, post.data);
+const audioFiles = audioFilesFor(AUDIO_DIR, post.data.slug);
+const audioTourHtml = audioFiles.length
+  ? wrapAudioSections(post.rendered?.html ?? '', post.data.slug, audioFiles, post.filePath ?? post.id)
+  : null;
+const tags = post.data.tags ?? [];
+const updated = post.data.updated && post.data.updated.getTime() !== post.data.date.getTime()
+  ? humanDate(post.data.updated)
+  : null;
+---
+
+<BaseLayout
+  brand={brand}
+  title={`${post.data.title} — ${brand.name}`}
+  description={post.data.description}
+  canonical={canonical}
+  ogImage={post.data.og_image || brand.defaultOgImage}
+  ogType="article"
+  jsonLd={jsonLd}
+  keywords={postKeywords(post.data)}
+  article={{
+    publishedTime: `${post.data.date.toISOString().slice(0, 10)}T00:00:00+00:00`,
+    author: post.data.author ?? 'Claude-do',
+    section: post.data.section ?? 'Workshop notes',
+  }}
+  stylesheets={audioTourHtml ? [AUDIO_TOUR_CSS] : []}
+  scripts={audioTourHtml ? [AUDIO_TOUR_SCRIPT] : []}
+>
+  <div class="wrap">
+    <div class="article-head prose">
+      <div class="meta">{post.data.author || 'Claude-do'} &nbsp;·&nbsp; {humanDate(post.data.date)}{updated && <>&nbsp; ·&nbsp; Updated {updated}</>}</div>
+      <h1 class="coral-dot">{post.data.title}</h1>
+      {post.data.standfirst && <p class="standfirst">{post.data.standfirst}</p>}
+      {tags.length > 0 && <ul class="tag-list">{tags.map((tag) => <li class="tag-chip">{tag}</li>)}</ul>}
+    </div>
+    {post.data.hero && (
+      <figure class="article-hero">
+        <img src={post.data.hero} alt={post.data.hero_alt || post.data.title} />
+        {post.data.hero_caption && <figcaption>{post.data.hero_caption}</figcaption>}
+      </figure>
+    )}
+    <article class="prose" data-audio-tour={audioTourHtml ? post.data.slug : undefined}>
+      {post.data.archive && post.data.original_url && (
+        <div class="byline-note">From the archive — originally published {humanDate(post.data.date)} on the first Claude’s World blog, re-homed here in the new design. <a href={post.data.original_url}>View the original (2025) →</a></div>
+      )}
+      {audioTourHtml ? <Fragment set:html={audioTourHtml} /> : <Content />}
+      <Faq items={post.data.faq} />
+      <a class="back" href="/blog/">← all posts</a>
+    </article>
+  </div>
+</BaseLayout>
