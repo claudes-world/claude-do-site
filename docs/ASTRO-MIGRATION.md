@@ -24,7 +24,16 @@ It emitted:
   updated dates from authored frontmatter;
 - authored `dateModified` and sitemap `lastmod` values.
 
-The legacy site did not emit `llms.txt` or `robots.txt`. The Astro migration
+Later on the live line (merged into `feat/astro-migration-catchup`):
+`tags` chips and meta keywords, `keywords`, `section`, `article:*` Open Graph
+tags, `og:image:width/height` read from PNG headers, entity `type` and
+`alternateName` in `Article.about`, and the audio tour (per-section players,
+`/assets/audio-tour.css` and `/assets/audio-tour.js`, opt-in by the presence of
+`static/media/audio/<slug>/`).
+
+The legacy site did not emit `llms.txt` or `robots.txt`. Both now exist in
+`static/` on the live line, but `build.py` only copies `styles`, `img`, `media`
+and `assets`, so they are not deployed. The Astro migration
 does not invent either artifact because the output/URL contract is intentionally
 unchanged.
 
@@ -42,9 +51,23 @@ endpoints intentionally preserve the old URL and field semantics rather than
 switching to a plugin's different defaults. The base layout centralizes all
 head emissions, while the post route uses the shared JSON-LD builder.
 
+Markdown parity: python-markdown and CommonMark disagree on a few inputs the
+posts use. `src/blog-core/markdown.ts` closes each gap: raw HTML blocks that
+start with a python-markdown block-level tag are kept whole until their closing
+tag (inline SVGs with blank lines inside, `<video>` lines), a lone inline tag
+between blank lines keeps its `<p>`, blank-separated `>` blocks merge into one
+blockquote, heading ids use python-markdown's toc slugify and `_N` suffixes,
+`--`/`---` become en/em dashes, table alignment is an inline style, and code
+blocks are left unhighlighted. One known difference remains and is accepted:
+in `the-plane-fights-back` python-markdown drops the `**bold**` nested inside
+the opening italic paragraph, and Astro renders it as written.
+
 The comparison gate treats formatting-only HTML serialization differences as
 acceptable, but parses and compares titles, meta fields, canonical/RSS links,
-JSON-LD, sitemap entries, RSS entries, visible article text, and static bytes.
+JSON-LD, sitemap entries, RSS entries, visible article and whole-page text,
+every src/href/poster/id/class/style/alt/title/data-* attribute in document
+order, and static bytes. The ordered element sequence is reported but not
+gated.
 Missing or newly invented paths also fail so the serving contract stays exact.
 
 ## Deployment and rollback boundary
