@@ -41,6 +41,26 @@ Markdown is rendered with remark plus small compatibility plugins
 (`src/blog-core/markdown.ts`) that reproduce python-markdown's behavior on raw
 HTML blocks, heading ids, smart dashes, blockquote merging and table alignment.
 
+## Deploy
+
+Deploys run locally from this box. Run `pnpm verify:migration` first, then back
+up the live root and sync `dist/`:
+
+```sh
+STAMP=$(date +%Y%m%d-%H%M%S)
+mkdir -p /home/claude/sites/_backups
+rsync -a /home/claude/sites/www/ "/home/claude/sites/_backups/www-$STAMP/"
+rsync -a --delete dist/ /home/claude/sites/www/
+```
+
+Rollback: `rsync -a --delete /home/claude/sites/_backups/www-<STAMP>/ /home/claude/sites/www/`.
+
+## Not in the Astro build
+
+Daily Prior and the podcast feed are not part of the Astro build. They exist
+only on the unmerged branch `feat/daily-prior-feed`, which is built on
+`build.py`.
+
 ## Migration verification
 
 ```sh
