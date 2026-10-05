@@ -124,5 +124,39 @@ class WrapAudioSectionsMismatchTests(unittest.TestCase):
         self.assertIn("slug-audio-02.mp3", out)
 
 
+class EmptyIntroTests(unittest.TestCase):
+    def test_empty_intro_gets_no_section_or_player(self):
+        # A post whose body opens with an <h2> (the standfirst lives in the
+        # template) has an intro chunk with no visible text. It must not become
+        # an "Introduction" section: that stacked two players at the top.
+        html = (
+            "\n"
+            "<style>\n.prose{--x:1}\n</style>\n"
+            '<h2 id="one">One</h2>\n'
+            "<p>Body one.</p>\n"
+            '<h2 id="two">Two</h2>\n'
+            "<p>Body two.</p>"
+        )
+        files = [FakePath("s-audio-01.mp3"), FakePath("s-audio-02.mp3")]
+        out = build.wrap_audio_sections(html, "s", files, "post.md")
+        self.assertEqual(out.count('<section class="at-section"'), 2)
+        self.assertIn("<style>", out)
+        self.assertNotIn("Introduction", out)
+        self.assertIn('data-audio-section="1" data-audio-title="One"', out)
+        self.assertIn("s-audio-01.mp3", out.split("</section>")[0])
+        with self.assertRaises(SystemExit):
+            build.wrap_audio_sections(html, "s", files + [FakePath("s-audio-03.mp3")], "post.md")
+
+    def test_intro_with_text_keeps_its_section(self):
+        html = (
+            "<p>Intro.</p>\n"
+            '<h2 id="one">One</h2>\n'
+            "<p>Body one.</p>"
+        )
+        files = [FakePath("s-audio-01.mp3"), FakePath("s-audio-02.mp3")]
+        out = build.wrap_audio_sections(html, "s", files, "post.md")
+        self.assertIn('data-audio-title="Introduction"', out)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -255,16 +255,28 @@ def wrap_audio_sections(body_html, slug, audio_files, path):
     lines = body_html.split("\n")
     bounds = _top_level_h2_bounds(lines)
     chunks = [lines[bounds[i]:bounds[i + 1]] for i in range(len(bounds) - 1)]
+    # An intro with no visible text (the standfirst lives in the template, so a
+    # post whose body opens with an <h2> has an empty intro) gets no section and
+    # no player: otherwise its "Introduction" player sits directly above the
+    # first heading's player, two players stacked at the top of the post.
+    intro_html = re.sub(r"<(style|script)\b.*?</\1>", "", "\n".join(chunks[0]), flags=re.S | re.I)
+    intro_text = TAG_RE.sub("", intro_html).strip()
+    has_intro = bool(intro_text)
+    passthrough = []
+    if not has_intro:
+        passthrough = chunks[0]  # keep its markup (a <style> block) outside any section
+        chunks = chunks[1:]
     if len(audio_files) != len(chunks):
         raise SystemExit(
             f"Post {path} (slug {slug!r}): {len(audio_files)} audio file(s) in "
-            f"{AUDIO_DIR / slug} but {len(chunks)} section(s) found (1 intro + "
-            f"one per top-level <h2>) — counts must match exactly; check for "
+            f"{AUDIO_DIR / slug} but {len(chunks)} section(s) found ("
+            f"{'1 intro + ' if has_intro else 'no intro text, so '}one per top-level <h2>) — "
+            f"counts must match exactly; check for "
             f"numbering drift.")
 
-    out = []
+    out = list(passthrough)
     for i, chunk in enumerate(chunks):
-        if i == 0:
+        if i == 0 and has_intro:
             title = "Introduction"
         else:
             m = H2_RE.match(chunk[0])
