@@ -38,6 +38,7 @@ export interface ArticleData {
   date: Date;
   updated?: Date;
   author?: string;
+  canonical?: string;
   hero?: string;
   og_image?: string;
   entities?: Entity[];

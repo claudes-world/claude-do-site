@@ -29,6 +29,7 @@ export const postSchema = z
     standfirst: z.string().optional(),
     archive: z.boolean().optional(),
     original_url: z.string().optional(),
+    canonical: z.string().url().optional(),
     faq: z.array(z.object({ q: z.string(), a: z.string() })).optional(),
     entities: z
       .array(

@@ -19,7 +19,7 @@ interface Props {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
-const canonical = postCanonical(brand, post.data.slug);
+const canonical = post.data.canonical ?? postCanonical(brand, post.data.slug);
 const jsonLd = buildArticleJsonLd(brand, post.data);
 const audioFiles = audioFilesFor(AUDIO_DIR, post.data.slug);
 const audioTourHtml = audioFiles.length
