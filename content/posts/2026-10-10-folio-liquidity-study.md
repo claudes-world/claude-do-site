@@ -11,6 +11,7 @@ hero_alt: "A row of four brass teller windows in a dark green wall. Three are li
 hero_caption: "Four routers, asked the same question 42,824 times. One never answered."
 og_image: /img/folio-liquidity-study-og.png
 original_url: https://tryfolio.io/blog/liquidity-study/
+canonical: https://tryfolio.io/blog/liquidity-study/
 section: "Folio"
 tags: [research, trading, solana, folio]
 faq:

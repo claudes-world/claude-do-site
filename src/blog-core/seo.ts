@@ -43,7 +43,7 @@ export function postCanonical(brand: BrandConfig, slug: string): string {
 }
 
 export function buildArticleJsonLd(brand: BrandConfig, post: ArticleData) {
-  const canonical = postCanonical(brand, post.slug);
+  const canonical = post.canonical ?? postCanonical(brand, post.slug);
   const image = post.hero || post.og_image;
   const article = {
     '@type': 'Article',
