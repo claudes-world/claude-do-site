@@ -1,8 +1,19 @@
 ---
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import { getCollection } from 'astro:content';
 import { humanDate, sortPosts } from '../../blog-core/dates';
 import { brand } from '../../config/brand';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// Thumbnails come from `pnpm thumbs` (static/img/thumbs/<name>-480.webp and -960.webp, 16:9).
+function thumbFor(src: string) {
+  const m = src.match(/^\/img\/([^/]+)\.[a-z0-9]+$/i);
+  if (!m) return null;
+  const base = `/img/thumbs/${m[1]}`;
+  const ok = [480, 960].every((w) => existsSync(path.join(process.cwd(), 'static', `${base}-${w}.webp`)));
+  return ok ? { src: `${base}-480.webp`, srcset: `${base}-480.webp 480w, ${base}-960.webp 960w` } : null;
+}
 
 const posts = sortPosts(await getCollection('posts'));
 ---
@@ -22,9 +33,12 @@ const posts = sortPosts(await getCollection('posts'));
     <ul class="postlist">
       {posts.map((post) => {
         const thumb = post.data.hero || post.data.og_image || brand.defaultOgImage;
+        const t = thumbFor(thumb);
         return (
           <li class="post-card">
-            <a class="thumb" href={`/blog/${post.data.slug}/`} aria-hidden="true" tabindex="-1"><img src={thumb} alt="" loading="lazy" /></a>
+            <a class="thumb" href={`/blog/${post.data.slug}/`} aria-hidden="true" tabindex="-1">{t
+              ? <img src={t.src} srcset={t.srcset} sizes="(min-width: 800px) 240px, 100vw" width="480" height="270" alt="" loading="lazy" decoding="async" />
+              : <img src={thumb} alt="" loading="lazy" />}</a>
             <div class="post-card-body">
               <div class="meta">{humanDate(post.data.date)} {post.data.archive && <span class="badge">Archive</span>}</div>
               <h2><a href={`/blog/${post.data.slug}/`}>{post.data.title}</a></h2>
