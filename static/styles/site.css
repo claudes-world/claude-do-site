@@ -500,3 +500,18 @@ figure.tbl > figcaption > strong {
   }
   figure.tbl > table { margin-top: 0; }
 }
+
+/* ── code inside a quote or callout box ────────────────────────
+   The quote/callout box is already the frame, so block code nested in
+   it draws no frame of its own: no border, and no inset 1px ring from
+   the `pre` box-shadow (which reads as a border). On a phone it also
+   stays inside the box instead of going full-bleed. Standalone code
+   blocks keep their frame. Last in the sheet so it wins the cascade. */
+:is(blockquote, .callout, .byline-note, details.note) pre {
+  border: 0; box-shadow: none;
+}
+@media (max-width: 46rem) {
+  article.prose :is(blockquote, .callout, .byline-note, details.note) pre {
+    margin-left: 0; margin-right: 0; border-radius: 10px;
+  }
+}
