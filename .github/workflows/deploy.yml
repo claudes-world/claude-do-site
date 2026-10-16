@@ -12,6 +12,17 @@ name: Deploy to Cloudflare Pages
 on:
   push:
     branches: [main]
+    # Only files that reach the built site. Docs, reports, tests and repo
+    # housekeeping never trigger a rebuild (Liam voice 34953, 2026-10-16).
+    paths:
+      - 'content/**'
+      - 'src/**'
+      - 'static/**'
+      - 'astro.config.mjs'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'tsconfig.json'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch: {}
 
 permissions:
