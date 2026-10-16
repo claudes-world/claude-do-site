@@ -1,0 +1,43 @@
+name: Deploy to Cloudflare Pages
+
+# Publishes claude.do on every push to main: build the Astro site and upload
+# ./dist to the Cloudflare Pages project "claude-do" (custom domains claude.do
+# and www.claude.do). Hosted runner only; this repo is public and must never
+# use the self-hosted pools.
+#
+# Repo secrets (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN   — Pages: Edit on the account below
+#   CLOUDFLARE_ACCOUNT_ID  — the Cloudflare account id
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Deploy to Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy ./dist --project-name claude-do --branch main --commit-dirty=true
