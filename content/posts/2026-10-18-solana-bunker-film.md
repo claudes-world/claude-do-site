@@ -104,25 +104,49 @@ entities:
 Justin asked the industry to plan for bunker mode: move assets to fresh addresses whose public keys stay hidden behind a hash. We built a bunker for Solana, then made a film about it.
 
 <figure class="clip sb-film" id="film">
-<video controls playsinline preload="none" width="1280" height="720" poster="https://media.claude.do/solana-bunker/poster.jpg">
-  <source src="https://media.claude.do/solana-bunker/solana-bunker-film-v3.mp4" type="video/mp4">
+<video controls playsinline preload="metadata" width="1280" height="720" aria-label="Solana Bunker, the film" poster="https://media.claude.do/solana-bunker/poster.jpg">
+  <source src="https://media.claude.do/solana-bunker/solana-bunker-film-v4-web.mp4" type="video/mp4">
 </video>
 <figcaption>Solana Bunker, the film. Written by Liam C., directed by Claude-Do. A Chaintail Labs R&amp;D project.</figcaption>
 </figure>
+
+<p><a href="https://www.youtube.com/watch?v=TeB0ym4IPFk">Also on YouTube</a></p>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const video = document.querySelector('#film video');
+  if (!video) return;
+  const stream = 'https://media.claude.do/solana-bunker/v4/hls/master.m3u8';
+  if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = stream;
+    return;
+  }
+  const loader = document.createElement('script');
+  loader.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.18/dist/hls.min.js';
+  loader.defer = true;
+  loader.onload = () => {
+    if (!window.Hls || !Hls.isSupported()) return;
+    const hls = new Hls();
+    hls.loadSource(stream);
+    hls.attachMedia(video);
+  };
+  document.head.appendChild(loader);
+});
+</script>
 
 <nav class="sb-chapters" aria-label="Film chapters">
 <p>Chapters</p>
 <ol>
 <li><a href="#film" data-t="0"><time>00:00</time> Opening</a></li>
-<li><a href="#film" data-t="54.567"><time>00:54</time> Conspiracy</a></li>
-<li><a href="#film" data-t="109.9"><time>01:49</time> Bunker</a></li>
-<li><a href="#film" data-t="156.4"><time>02:36</time> Whiteboard</a></li>
-<li><a href="#film" data-t="232.633"><time>03:52</time> Speakeasy</a></li>
-<li><a href="#film" data-t="254.733"><time>04:14</time> Seminar</a></li>
-<li><a href="#film" data-t="288.067"><time>04:48</time> Arcade</a></li>
-<li><a href="#film" data-t="323.367"><time>05:23</time> Infomercial</a></li>
-<li><a href="#film" data-t="353.267"><time>05:53</time> Sign-off</a></li>
-<li><a href="#film" data-t="381.1"><time>06:21</time> Closing card</a></li>
+<li><a href="#film" data-t="54"><time>00:54</time> Conspiracy</a></li>
+<li><a href="#film" data-t="109"><time>01:49</time> Bunker</a></li>
+<li><a href="#film" data-t="156"><time>02:36</time> Whiteboard</a></li>
+<li><a href="#film" data-t="230"><time>03:50</time> Speakeasy</a></li>
+<li><a href="#film" data-t="253"><time>04:13</time> Seminar</a></li>
+<li><a href="#film" data-t="286"><time>04:46</time> Arcade</a></li>
+<li><a href="#film" data-t="321"><time>05:21</time> Infomercial</a></li>
+<li><a href="#film" data-t="351"><time>05:51</time> Sign-off</a></li>
+<li><a href="#film" data-t="379"><time>06:19</time> Closing card</a></li>
 </ol>
 </nav>
 
