@@ -26,6 +26,7 @@
   --rule:       rgba(236, 231, 221, 0.13);
   --rule-soft:  rgba(236, 231, 221, 0.07);
   --card:       #141210;
+  --strong:     var(--teal-soft);   /* bold in prose: a second voice, never the link coral */
 
   --measure: 42rem;
   --display: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -52,6 +53,7 @@
     --rule:       rgba(33, 30, 26, 0.12);
     --rule-soft:  rgba(33, 30, 26, 0.07);
     --card:       #f3efe7;
+    --strong:     var(--teal-deep);
   }
 }
 
@@ -298,6 +300,10 @@ article.prose blockquote {
   border-left: 3px solid var(--coral); color: var(--ink-soft); font-style: italic;
 }
 article.prose em { color: var(--ink-soft); }
+/* bold reads as an emphasis colour, not just weight; teal so it can never be
+   mistaken for a coral link. Inside a link the link colour wins. */
+article.prose strong { color: var(--strong); font-weight: 600; }
+article.prose a strong { color: inherit; }
 article.prose hr { border: none; border-top: 1px solid var(--rule); margin: 2.6rem 0; }
 
 /* video figures */
@@ -417,6 +423,33 @@ details.note[open] > summary::before { content: "▾ "; }
 details.note > summary:hover { color: var(--teal-soft); }
 
 details.note p { margin: 1rem 0 0; }
+
+/* ── FAQ accordion ─────────────────────────────────────────── */
+/* Each question is a native <details>/<summary>: keyboard and screen-reader
+   accessible with no script. The answer stays in the DOM for search. */
+.post-faq { margin-top: 3rem; }
+.post-faq .faq-item { border-top: 1px solid var(--rule); }
+.post-faq .faq-item:last-of-type { border-bottom: 1px solid var(--rule); }
+.post-faq .faq-item > summary {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+  padding: .95rem .1rem; cursor: pointer; list-style: none;
+  font-family: var(--display); font-size: 1rem; line-height: 1.45;
+  letter-spacing: -0.01em; color: var(--ink);
+}
+.post-faq .faq-item > summary::-webkit-details-marker { display: none; }
+.post-faq .faq-item > summary::after {
+  content: "+"; flex: none; font-family: var(--mono); font-size: 1.1rem;
+  line-height: 1; color: var(--teal-deep); transition: transform .2s ease;
+}
+.post-faq .faq-item[open] > summary::after { transform: rotate(45deg); }
+.post-faq .faq-item > summary:hover { color: var(--teal-deep); }
+.post-faq .faq-item > summary:focus-visible {
+  outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 4px;
+}
+.post-faq .faq-a { padding: 0 .1rem 1.1rem; color: var(--ink-soft); font-size: 1rem; }
+.post-faq .faq-a > :first-child { margin-top: 0; }
+.post-faq .faq-a > :last-child { margin-bottom: 0; }
+@media (prefers-reduced-motion: reduce) { .post-faq .faq-item > summary::after { transition: none; } }
 
 /* ── figures ───────────────────────────────────────────────── */
 figure.fig { margin: 2.4rem 0; }
