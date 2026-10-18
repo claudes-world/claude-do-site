@@ -88,6 +88,7 @@ entities:
 @media (min-width:60rem){article.prose figure.fig{width:52rem;margin-left:-6.5rem;margin-right:0}}
 .prose details.note{margin:1.4rem 0 1.8rem}
 .prose .sb-signoff{font-family:var(--mono);font-size:.82rem;letter-spacing:.06em;color:var(--muted);margin-top:2rem}
+.prose ul a{overflow-wrap:anywhere}
 </style>
 
 <aside class="sb-tweet" aria-label="The post that inspired this one">
