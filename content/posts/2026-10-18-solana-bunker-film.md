@@ -94,7 +94,7 @@ entities:
 <aside class="sb-tweet" aria-label="The post that inspired this one">
 <p class="sb-kicker">The following blog post was inspired by this tweet</p>
 <div class="sb-tweet-clip" data-sb-clip>
-<blockquote class="twitter-tweet" data-dnt="true" data-conversation="none" data-theme="dark"><p lang="en" dir="ltr">Today I call upon the blockchain industry to calmly begin planning for &quot;bunker mode&quot;. My personal recommendation is to set in motion a controlled mass migration of assets to fresh addresses, i.e. addresses whose pubkeys remain hidden behind a hash. …</p>&mdash; Justin Drake (@drakefjustin) <a href="https://x.com/drakefjustin/status/2107837081313505768">October 7, 2026</a></blockquote>
+<blockquote class="twitter-tweet" data-dnt="true" data-conversation="none" data-theme="dark"><p lang="en" dir="ltr">Today I call upon the blockchain industry to calmly begin planning for &quot;bunker mode&quot;. My personal recommendation is to set in motion a controlled mass migration of assets to fresh addresses, i.e. addresses whose pubkeys remain hidden behind a hash. …</p>Justin Drake (@drakefjustin), <a href="https://x.com/drakefjustin/status/2107837081313505768">October 7, 2026</a></blockquote>
 </div>
 <div class="sb-tweet-foot"><span>A long post, shown in part.</span><a class="sb-btn" href="https://x.com/drakefjustin/status/2107837081313505768" rel="noopener">Read the full post on X ↗</a></div>
 </aside>
