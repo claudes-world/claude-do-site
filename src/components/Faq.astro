@@ -28,8 +28,9 @@ const rendered = await Promise.all(
 
 {rendered.length > 0 && (
   <section class="post-faq"><h2>FAQ</h2>
-    {rendered.map(({ item, html }) => <><h3>{item.q}</h3>
-      <Fragment set:html={html} />
-    </>)}
+    {rendered.map(({ item, html }) => <details class="faq-item">
+      <summary>{item.q}</summary>
+      <div class="faq-a"><Fragment set:html={html} /></div>
+    </details>)}
   </section>
 )}
